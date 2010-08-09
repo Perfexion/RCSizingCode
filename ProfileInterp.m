@@ -1,6 +1,15 @@
 function [ OutMat  ] = ProfileInterp(ProfileMat, NumProfiles)
-    %PROFILEINTERP Summary of this function goes here
-    %   Detailed explanation goes here
+    %PROFILEINTERP Interpolates and generates fuselage profiles
+    %   Usage:
+    % OutMat = ProfileInter(ProfileMat, NumProfiles)
+    %   Where:
+    % ProfileMat is a matrix of size p x N*3 where p is the number of points
+    % in one fuselage profile and N is the number of profiles being
+    % interpolated between. Colums are in sets of 3, where the first column
+    % is the list of x points in the profile, column 2 is the list of y
+    % points in the profile, and column 3 is the location along the body
+    % (nondimensionalized - i.e. between 0 and 1 inclusive) of the profile.
+    % Only the first line of the third (sixth, ninth, etc) column is used.
     OutMat = zeros(length(ProfileMat(:,1)),NumProfiles);
     
     %%Fill Z locations (Non-Dimensionally, ranging from 0 to 1)
