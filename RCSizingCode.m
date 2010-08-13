@@ -5,6 +5,7 @@ function RCSizingCode()
 
     %% Initialization
     Continue = true; %This is the flag which control the main while loop. Set it to false to break out of the loop;
+    Iterations = 0; 
     
     
     %% Input Parameters
@@ -25,7 +26,7 @@ function RCSizingCode()
     VTarget = 88; %Target Velocity (ft/s) - For scale, 88 corresponds to 60 MPH
     
     % -- Fuselage
-    FuselageLength = 6; 
+    FuselageLength = 6;
     FuselageDiameter = 8/12;
     
     % -- Main Wing
@@ -51,8 +52,9 @@ function RCSizingCode()
     VTailTC = 0.1; %Vertical Tail Thickness Ratio
     
     % -- Electronics
-    MotorWeight = 2; % Weight of Motor (lbs)
-    BatteryWeight = 4; % Weight of Battery (lbs)
+    MotorWeight = 1; % Weight of Motor (lbs) - Hacker B50-12XL weighs .74 lbs
+    BatteryWeight = 3.5; % Weight of Battery (lbs)
+    PayloadWeight = 2; %Weight of Payload (lbs)
     
     %% Atmosphere
 
@@ -75,6 +77,7 @@ function RCSizingCode()
        WingCR = WingS/(WingB*(1+WingTPR)/2); %Wing Root Chord (ft)
        WingCT = WingTPR*WingCR; %Wing Tip Chord (ft)
        WingCBar = WingS/WingB; %Wing Mean Aerodynamic Chord (ft)
+       WingAirfoil = 'NACA 0010'; %Wing Airfoil 
        
        % -- Horizontal Tail
        HTailS = HTailVR*WingCBar*WingS/(HTailAC-WingAC); %Horizontal tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
@@ -82,13 +85,15 @@ function RCSizingCode()
        HTailCR = HTailS/(HTailB*(1+HTailTPR)/2); %Horizontal Tail Root Chord (ft)
        HTailCT = HTailTPR*HTailCR; %Horizontal Tail Tip Chord (ft)
        HTailCBar = HTailS/HTailB; %Horizontal Tail Mean Aerodynamic Chord (ft)
+       HTailAirfoil = 'NACA 0010'; %Horizontal Tail Airfoil
        
        % -- Horizontal Tail
        VTailS = VTailVR*WingB*WingS/(VTailAC-WingAC); %Vertical tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
        VTailB = sqrt(VTailAR*VTailS); %Vertical Tail Span (ft)
-       VTailCR = VTailS/(VTailB*(1+VTailTPR)/2); %Horizontal Tail Root Chord (ft)
-       VTailCT = VTailTPR*VTailCR; %Horizontal Tail Tip Chord (ft)
-       VTailCBar = VTailS/VTailB; %Horizontal Tail Mean Aerodynamic Chord (ft)
+       VTailCR = VTailS/(VTailB*(1+VTailTPR)/2); %Vertical Tail Root Chord (ft)
+       VTailCT = VTailTPR*VTailCR; %Vertical Tail Tip Chord (ft)
+       VTailCBar = VTailS/VTailB; %Vertical Tail Mean Aerodynamic Chord (ft)
+       VTailAirfoil = 'NACA 0010'; %Vertical Tail Airfoil
        
        %% Drag Buildup
        
@@ -116,27 +121,41 @@ function RCSizingCode()
        %% Structural weight estimates
        
        %This section will estimate the weight of each component of the
-       %aircraft based on the 
+       %aircraft based on the component size. 
+       BalsaDensity = .00576; %lb/in^3
+       CarbonFiberDensity = .064667; %ln/in^3
+       WingSparCSA = .0706; %in^2 based on .5in OD and .4 in ID
+       FuselageSparCSA = .149226; %in^2 based in 1in OD and .9in ID
+       WingBCSAE = 1/3*1/24; %Dimensionless
+       FuselageBCSAE = ((FuselageDiameter*.8)^2/4*pi-(FuselageDiameter*.65)^2/4*pi)/...
+           (FuselageDiameter*.8)^2/4*pi*1/24; %Dimensionless
+       
+       WingWeight = WingB*CarbonFiberDensity*WingSparCSA*12 + ...
+           WingBCSAE*BalsaDensity*WingTC*WingS*12^3;
+       HTailWeight = HTailB*CarbonFiberDensity*WingSparCSA*12 + ...
+           WingBCSAE*BalsaDensity*HTailTC*HTailS*12^3;
+       VTailWeight = VTailB*CarbonFiberDensity*WingSparCSA*12 + ...
+           WingBCSAE*BalsaDensity*VTailTC*VTailS*12^3;
+       FuselageWeight = FuselageLength*CarbonFiberDensity*FuselageSparCSA*12 + ...
+           FuselageBCSAE*BalsaDensity*FuselageLength*FuselageDiameter^2/4*pi*12^3;
        
        %% Weight Summation
        
-       %NewWeight = sum(); - TODO: Add weight of: Wing, Body, HTail, VTail,
-       %Motor, Battery, Payload, Electronics
+       NewWeight = WingWeight + HTailWeight + VTailWeight + FuselageWeight...
+           + BatteryWeight + MotorWeight + PayloadWeight; %Sum all weights (lbm)
        
        
        %% Loop Break Test
        
-       %{
-       if abs(NewWeight-Weight)/Weight > .01
+       if abs(NewWeight-Weight)/Weight < .01
            Continue = false;
        end
-       NewWeight = Weight;
-       %}
-       % TODO: Think about what needs to be done upon convergence;
-       
-       Continue = false; %Synthetic Loop Break - REMOVE THIS FOR WORKING VERSIONS!
-                    
+       Weight = NewWeight;      
+       Iterations = Iterations + 1
     end
+    %% Organize Function Output
+    
+    astring = 'pause'
 end
 
 %% Sub Functions
