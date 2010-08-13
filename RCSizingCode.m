@@ -19,35 +19,35 @@ function RCSizingCode()
     %specific application. 
     
     % -- Weight Guess
-    Weight = 10;
+    Weight = 8;
     
     % -- Flight Conditions;
     VTarget = 88; %Target Velocity (ft/s) - For scale, 88 corresponds to 60 MPH
     
     % -- Fuselage
-    FuselageLength = 4; 
+    FuselageLength = 6; 
     FuselageDiameter = 8/12;
     
     % -- Main Wing
     WingAR = 9.5; %Aspect Ratio
     WingTPR = .3; %Taper Rati0 
     WingLoading = 1; %Wing loading (lbs/ft^2) - Simply wing area divided by weight. In the RC aircraft world a wing loading of 1 is generally regarded as an intermediate speed aircraft.
-    WingAC = 1.5; %Location of aerodynamic center of wing behind nose (in ft)
+    WingAC = 2; %Location of aerodynamic center of wing behind nose (in ft)
     WingQCSweep = 15*pi/180; %Quarter Chord Sweep of the Wing
     WingTC = 0.1; %Wing Thickness Ratio
     
     % -- Horizontal Tail
     HTailAR = 4; %Aspect Ratio
     HTailTPR = .5; %Taper Ratio
-    HTailVR = 1; %Volume Ratio
-    HTailAC = 3.5; %Location of aerodynamic center of horizontal tail behind nose (in ft)
+    HTailVR = .5; %Volume Ratio
+    HTailAC = 5.5; %Location of aerodynamic center of horizontal tail behind nose (in ft)
     HTailTC = 0.1; %Horizontal Tail Thickness Ratio
     
     % -- Vertical Tail
     VTailAR = 1.8; %Aspect Ratio
     VTailTPR = .8; %Taper Ratio
     VTailVR = 0.09; %Volume Ratio
-    VTailAC = 3.5; %Location of aerodynamic center of vertical tail behind nose (in ft)
+    VTailAC = 5.5; %Location of aerodynamic center of vertical tail behind nose (in ft)
     VTailTC = 0.1; %Vertical Tail Thickness Ratio
     
     % -- Electronics
@@ -59,8 +59,8 @@ function RCSizingCode()
     %The following three equations come from David G. Hull's Book at page
     %45
     AtmTmp = 518.69 - 3.5662*10^-3 * 2300; %Rankine
-    AtmPrs = 1.1376*10^-11 * AtmTmp ^ 5.2560; %lb/ft^2
-    AtmDns = 6.6277*10^-15 * AtmTmp ^ 4.2560; %slugs/ft^3
+    AtmPrs = 1.1376*10^-11 * AtmTmp ^ 5.2560; %lbf/ft^2
+    AtmDns = 6.6277*10^-15 * AtmTmp ^ 4.2560 * (32.1740486); %lbm/ft^3
 
    
 
@@ -77,14 +77,14 @@ function RCSizingCode()
        WingCBar = WingS/WingB; %Wing Mean Aerodynamic Chord (ft)
        
        % -- Horizontal Tail
-       HTailS = HTailVR*WingB*WingS/(HTailAC-WingAC); %Horizontal tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
+       HTailS = HTailVR*WingCBar*WingS/(HTailAC-WingAC); %Horizontal tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
        HTailB = sqrt(HTailAR*HTailS); %Horizontal Tail Span (ft)
        HTailCR = HTailS/(HTailB*(1+HTailTPR)/2); %Horizontal Tail Root Chord (ft)
        HTailCT = HTailTPR*HTailCR; %Horizontal Tail Tip Chord (ft)
        HTailCBar = HTailS/HTailB; %Horizontal Tail Mean Aerodynamic Chord (ft)
        
        % -- Horizontal Tail
-       VTailS = VTailVR*WingCBar*WingS/(VTailAC-WingAC); %Vertical tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
+       VTailS = VTailVR*WingB*WingS/(VTailAC-WingAC); %Vertical tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
        VTailB = sqrt(VTailAR*VTailS); %Vertical Tail Span (ft)
        VTailCR = VTailS/(VTailB*(1+VTailTPR)/2); %Horizontal Tail Root Chord (ft)
        VTailCT = VTailTPR*VTailCR; %Horizontal Tail Tip Chord (ft)
@@ -195,8 +195,8 @@ function fk = DragBuildup(type, dim1, dim2, dim3, V)
     %The following three equations come from David G. Hull's Book at page
     %45
     AtmTmp = 518.69 - 3.5662*10^-3 * 2300; %Rankine
-    AtmPrs = 1.1376*10^-11 * AtmTmp ^ 5.2560; %lb/ft^2
-    AtmDns = 6.6277*10^-15 * AtmTmp ^ 4.2560; %slugs/ft^3
+    AtmPrs = 1.1376*10^-11 * AtmTmp ^ 5.2560; %lbf/ft^2
+    AtmDns = 6.6277*10^-15 * AtmTmp ^ 4.2560 * (32.1740486); %lbm/ft^3
     %The following value was found at:
     %http://www.engineeringtoolbox.com/air-absolute-kinematic-viscosity-d_6
     %01.html
