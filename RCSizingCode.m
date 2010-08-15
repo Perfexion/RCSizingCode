@@ -20,14 +20,14 @@ function RCSizingCode()
     %specific application. 
     
     % -- Weight Guess
-    Weight = 8;
+    Weight = 8; %lbs
     
     % -- Flight Conditions;
     VTarget = 88; %Target Velocity (ft/s) - For scale, 88 corresponds to 60 MPH
     
     % -- Fuselage
-    FuselageLength = 6;
-    FuselageDiameter = 8/12;
+    FuselageLength = 6; %ft
+    FuselageDiameter = 8/12; %ft
     
     % -- Main Wing
     WingAR = 9.5; %Aspect Ratio
