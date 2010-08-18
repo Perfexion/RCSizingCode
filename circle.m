@@ -30,6 +30,6 @@ X=X';
 Y=Y+center(2);
 Y=Y';
 Z=[X,Y, Xs', Ys'];
-plot(X,Y,Xs,Ys);
-[Xs ;Ys]
+% plot(X,Y,Xs,Ys);
+% [Xs ;Ys]
 axis square;

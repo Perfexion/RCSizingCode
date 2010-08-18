@@ -256,6 +256,9 @@ function runButton_Callback(hObject, eventdata, handles)
                 end
             end
             fclose(fid);
+            
+            assignin('base', 'AirDevilsOut', AirDevilsOut);
+            
        
        end
        Weight = NewWeight;      

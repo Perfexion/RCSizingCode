@@ -30,13 +30,13 @@ function [ OutMat  ] = ProfileInterp(ProfileMat, NumProfiles)
         OutMat(:,i*3-2) = (ProfileMat(:,profile).*scale + ProfileMat(:,profile+3).*(1-scale));
         OutMat(:,i*3-1) = (ProfileMat(:,profile+1).*scale + ProfileMat(:,profile+4).*(1-scale));        
     end
-    hold off
-    plot3(OutMat(:,1), OutMat(:,2), OutMat(:,3));
-    hold on 
-    for i = 1:NumProfiles-1
-        plot3(OutMat(:,i*3+1), OutMat(:,i*3+2), OutMat(:,i*3+3));
-    end
-    hold off
+%     hold off
+%     plot3(OutMat(:,1), OutMat(:,2), OutMat(:,3));
+%     hold on 
+%     for i = 1:NumProfiles-1
+%         plot3(OutMat(:,i*3+1), OutMat(:,i*3+2), OutMat(:,i*3+3));
+%     end
+%     hold off
     
 end
 
