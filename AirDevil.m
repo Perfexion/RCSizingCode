@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 17-Aug-2010 15:46:51
+% Last Modified by GUIDE v2.5 18-Aug-2010 11:15:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1064,3 +1064,101 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+
+
+
+function vTailAirfoilTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to vTailAirfoilTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of vTailAirfoilTxt as text
+%        str2double(get(hObject,'String')) returns contents of vTailAirfoilTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function vTailAirfoilTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to vTailAirfoilTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in vTailNonNACAAirfoilButton.
+function vTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
+% hObject    handle to vTailNonNACAAirfoilButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+Airfoil
+uiwait
+global airfoil
+
+
+% --- Executes on button press in hTailNonNACAAirfoilButton.
+function hTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailNonNACAAirfoilButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+Airfoil
+uiwait
+global airfoil
+
+
+% --- Executes on button press in wingNonNACAAirfoilButton.
+function wingNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
+% hObject    handle to wingNonNACAAirfoilButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+Airfoil
+uiwait
+global airfoil
+
+
+function wingAirfoilTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to wingAirfoilTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of wingAirfoilTxt as text
+%        str2double(get(hObject,'String')) returns contents of wingAirfoilTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function wingAirfoilTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to wingAirfoilTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function hTailAirfoilTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailAirfoilTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of hTailAirfoilTxt as text
+%        str2double(get(hObject,'String')) returns contents of hTailAirfoilTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function hTailAirfoilTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hTailAirfoilTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
