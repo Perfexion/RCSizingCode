@@ -68,6 +68,7 @@ function runButton_Callback(hObject, eventdata, handles)
     WingAC = str2double(get(handles.wingACTxt,'String')); %Location of aerodynamic center of wing behind nose (in ft)
     WingQCSweep = str2double(get(handles.wingQCSweepTxt,'String')); %Quarter Chord Sweep of the Wing
     WingTC = str2double(get(handles.wingTCTxt,'String')); %Wing Thickness Ratio
+    WingDihadrial = str2double(get(handles.wingDihadrialTxt,'String')); %Wing Dihadrial
     
     % -- Horizontal Tail
     HTailAR = str2double(get(handles.hTailARTxt,'String')); %Aspect Ratio
@@ -197,6 +198,7 @@ function runButton_Callback(hObject, eventdata, handles)
             'Wing Aspect Ratio' WingAR;
             'Wing Taper Ratio' WingTPR;
             'Wing Quarter Chord Sweep' WingQCSweep;
+            'Wing Dihadrial' WingDihadrial;
             'Wing Thickness Ratio' WingTC;
             'Wing Airfoil' WingAirfoil;
             'Wing Weight Estimate' WingWeight;
@@ -212,6 +214,7 @@ function runButton_Callback(hObject, eventdata, handles)
             'HTail Aspect Ratio' HTailAR;
             'HTail Taper Ratio' HTailTPR;
             'HTail Quarter Chord Sweep' HTailQCSweep;
+            'HTail Dihadrial' HTailDihadrial;
             'HTail Thickness Ratio' HTailTC;
             'HTail Airfoil' HTailAirfoil;
             'HTail Weight Estimate' HTailWeight;
