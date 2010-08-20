@@ -19,7 +19,7 @@ function [] = TDView()
         bodyprofile = evalin('base', 'BodySpline');
     catch exception        
         bodyprofile = profiles(1,3:3:end);
-        bodyprofile = sin(bodyprofile.*pi);
+        bodyprofile = sin(sqrt(bodyprofile).*pi);
     end
     if length(bodyprofile) ~= length(profiles(1,3:3:end))
        x = linspace(0,1,length(bodyprofile));
