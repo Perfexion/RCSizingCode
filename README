@@ -2,33 +2,20 @@ This is the home directory for the RCSizingCode project
 
 The ultimate goal of this code is to have a matlab function which can intelligently perform our RC sizing for us.
 
-There are currently three branches withing git for this project, the master branch, the stable branch, and the dev branch. I will detail each branch:
+There are currently two branches withing git for this project, the master branch, and the dev branch.
 
 Master Branch - 
 
-	This branch is the main branch of the project. Only previous stable versions will be committed here. 
-
-Stable Branch - 
-
-	This branch will provide the most recent complete and working version of the code. This should be checked out when using the code for it's designed function but should not be used for editing. Only when the dev branch reaches a working and stable state should it be merged with this branch. 
+	This branch is the main branch of the project. Only when a dev branch is deemed stable will it be committed here.  
 
 Dev Branch -
 	
 	This branch is the branch which should be used for developement. Any new features will first be added here. The dev branch will also maintain a todo list which can be contributed to by anyone, and which those wishing to contribute to the code should look for tasks which need done in the code.
 
 
-
 How to use git: 
 
-To be honest I am still working out the details of git myself. I will write up a short section here on the simple commands for git once I get it mostly figured out myself. 
-
-You may want to checkout the following: 
-
-http://www.kernel.org/pub/software/scm/git/docs/user-manual.html
-
-http://kylecordes.com/2008/git-windows-go
-
-http://nathanj.github.com/gitguide/committing.html
+Please view the forum for more information on how to use this tool. Git may seem daunting at first but it is really quite simple. As a sign of your willingness to collaborate / a way to test whether or not you have got git working, you can sign your name to the collaborators below and commit your changes. Please do this is the dev branch. 
 
 
 Looking forward to your support!
@@ -36,8 +23,9 @@ Looking forward to your support!
 Justin
 
 Air Devils Webmaster
+Air Devils Design Lead
 
-Collaborators:
+Collaborators: 
 JT Hoffman
 Justin Hoffman
 
