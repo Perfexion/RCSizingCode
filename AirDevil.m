@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 19-Aug-2010 23:21:57
+% Last Modified by GUIDE v2.5 20-Aug-2010 10:20:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -273,7 +273,14 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     figure(1)
-    TDView()
+    if (get(handles.solidWorksCheckBox,'Value') == get(handles.solidWorksCheckBox,'Max'))
+       % Checkbox is checked
+       solidFlag=1;
+    else
+       % Checkbox is not checked
+       solidFlag=0;
+    end
+    TDView(solidFlag)
     
     
 
@@ -1166,3 +1173,12 @@ function hTailAirfoilTxt_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in solidWorksCheckBox.
+function solidWorksCheckBox_Callback(hObject, eventdata, handles)
+% hObject    handle to solidWorksCheckBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of solidWorksCheckBox

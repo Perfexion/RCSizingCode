@@ -1,4 +1,4 @@
-function [] = TDView()
+function [] = TDView(solidFlag)
     
 
     AirDevilsOut = evalin('base', 'AirDevilsOut');
@@ -32,10 +32,17 @@ function [] = TDView()
     hold off
     plot3(profiles(:,1), profiles(:,2), profiles(:,3));
     hold on 
+    
     for i = 1:length(profiles(1,:))/3-1
         plot3(profiles(:,i*3+1), profiles(:,i*3+2), profiles(:,i*3+3));
     end
     axis equal
+    
+    %Import to SolidWorks if solidFlag = 1.
+    if solidFlag ==1
+    solidcurve(profiles);
+    else
+    end
     
     %% Main Wing
     foilprofile = AirfoilBuilder('NACA 0010', 100);
@@ -62,7 +69,6 @@ function [] = TDView()
        wingprofiles(:,i*3-2) = foilprofiles(:,i*3);
        wingprofiles(:,i*3) = foilprofiles(:, i*3-2);
     end
-    
 
     plot3(wingprofiles(:,1), wingprofiles(:,2), wingprofiles(:,3));
     hold on 
@@ -70,6 +76,12 @@ function [] = TDView()
         plot3(wingprofiles(:,i*3+1), wingprofiles(:,i*3+2), wingprofiles(:,i*3+3));
     end
     axis equal
+    
+    %Import to SolidWorks if solidFlag = 1.
+    if solidFlag ==1
+    solidcurve(wingprofiles);
+    else
+    end
   
     %% Horizontal Tail
     hfoilprofile = AirfoilBuilder('NACA 0010', 100);
@@ -105,6 +117,12 @@ function [] = TDView()
     end
     axis equal
     
+    %Import to SolidWorks if solidFlag = 1.
+    if solidFlag ==1
+    solidcurve(htailprofiles);
+    else
+    end
+
     %% Vertical Tail
     
     vfoilprofile = AirfoilBuilder('NACA 0010', 100);
@@ -136,5 +154,11 @@ function [] = TDView()
         plot3(vtailprofiles(:,i*3+1), vtailprofiles(:,i*3+2), vtailprofiles(:,i*3+3));
     end
     axis equal
+    
+    %Import to SolidWorks if solidFlag = 1.
+    if solidFlag ==1
+    solidcurve(vtailprofiles);
+    else
+    end
     
 end
