@@ -1,6 +1,7 @@
-% function [] = TDView()
-%     
+function [] = TDView()
+    
 
+    AirDevilsOut = evalin('base', 'AirDevilsOut');
     NumProfiles = 40;
     
     %% Body
@@ -9,7 +10,7 @@
     profin(:,3) = 0;
     profin(:,4:5) = z(:, 1:2);
     profin(:,6) = 1;
-    profiles = profileinterp(profin,NumProfiles);
+    profiles = profileinterp(profin,NumProfiles*2);
     
     
     bodyprofile = profiles(1,3:3:end);
@@ -65,7 +66,7 @@
     hfoilprofin(:,3) = 0;
     hfoilprofin(:,4:5) = hfoilprofile(:,1:2);
     hfoilprofin(:,6) = 1;
-    hfoilprofiles = profileinterp(hfoilprofin,NumProfiles);
+    hfoilprofiles = profileinterp(hfoilprofin,NumProfiles/4);
     
     for i = 1:length(hfoilprofiles(1,:))/3
        hfoilprofiles(:,i*3-2:i*3-1) = hfoilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{23,2}-(AirDevilsOut{23,2}-AirDevilsOut{24,2}).*hfoilprofiles(1,i*3)./hfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
@@ -80,7 +81,7 @@
    
     htailprofiles = hfoilprofiles;
     for i = 1:length(hfoilprofiles(1,:))/3
-       htailrofiles(:,i*3-2) = hfoilprofiles(:,i*3);
+       htailprofiles(:,i*3-2) = hfoilprofiles(:,i*3);
        htailprofiles(:,i*3) = hfoilprofiles(:, i*3-2);
     end
     
@@ -92,4 +93,36 @@
     end
     axis equal
     
-% end
+    %% Vertical Tail
+    
+    vfoilprofile = AirfoilBuilder('NACA 0010', 100);
+    vfoilprofin = vfoilprofile(:,1:2);
+    vfoilprofin(:,3) = 0;
+    vfoilprofin(:,4:5) = vfoilprofile(:,1:2);
+    vfoilprofin(:,6) = 1;
+    vfoilprofiles = profileinterp(vfoilprofin,NumProfiles/4);
+    
+    for i = 1:length(vfoilprofiles(1,:))/3
+       vfoilprofiles(:,i*3-2:i*3-1) = vfoilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{37,2}-(AirDevilsOut{37,2}-AirDevilsOut{38,2}).*vfoilprofiles(1,i*3)./vfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
+       vfoilprofiles(:,i*3) = vfoilprofiles(:,i*3)*AirDevilsOut{36,2}/2; %Scale the wing span
+       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+(AirDevilsOut{37,2}-AirDevilsOut{38,2})./AirDevilsOut{36,2}.*vfoilprofiles(1,i*3); %adjust for leading edge sweep
+       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+(vfoilprofiles(1,i*3)*(AirDevilsOut{42,2}-atan(AirDevilsOut{37,2}-AirDevilsOut{38,2})./AirDevilsOut{36,2})/2); %adjust for quarter chord sweep
+       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+AirDevilsOut{34,2}-.25*AirDevilsOut{37,2}; %Adjust back to the located wing AC
+    end
+   
+    vtailprofiles = vfoilprofiles;
+    for i = 1:length(vfoilprofiles(1,:))/3
+       vtailprofiles(:,i*3-1) = vfoilprofiles(:,i*3);
+       vtailprofiles(:,i*3-2) = vfoilprofiles(:, i*3-1);
+       vtailprofiles(:,i*3) = vfoilprofiles(:, i*3-2);
+    end
+    
+
+    plot3(vtailprofiles(:,1), vtailprofiles(:,2), vtailprofiles(:,3));
+    hold on 
+    for i = 1:length(vtailprofiles(1,:))/3-1
+        plot3(vtailprofiles(:,i*3+1), vtailprofiles(:,i*3+2), vtailprofiles(:,i*3+3));
+    end
+    axis equal
+    
+end
