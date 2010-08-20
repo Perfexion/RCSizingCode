@@ -5,11 +5,16 @@ function [] = TDView()
     NumProfiles = 40;
     
     %% Body
-    z = circle([0,0], 100, .5);
-    profin(:,1:2) = z(:, 1:2);
-    profin(:,3) = 0;
-    profin(:,4:5) = z(:, 1:2);
-    profin(:,6) = 1;
+      try 
+        profin = evalin('base', 'BodyProfiles');
+    catch exception
+        z = circle([0,0], 100, .5);
+        profin(:,1:2) = z(:, 1:2);
+        profin(:,3) = 0;
+        profin(:,4:5) = z(:, 1:2);
+        profin(:,6) = 1;
+    end
+
     profiles = profileinterp(profin,NumProfiles*2);
     
     
