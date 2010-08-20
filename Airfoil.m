@@ -22,7 +22,7 @@ function varargout = Airfoil(varargin)
 
 % Edit the above text to modify the response to help Airfoil
 
-% Last Modified by GUIDE v2.5 18-Aug-2010 17:16:02
+% Last Modified by GUIDE v2.5 19-Aug-2010 15:52:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,6 +54,8 @@ function Airfoil_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for Airfoil
 handles.output = hObject;
+vars = evalin('base', 'who');
+set(handles.listbox1, 'String', vars)
 
 % Update handles structure
 guidata(hObject, handles);
@@ -79,39 +81,43 @@ function doneButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global airfoil
-airfoil=get(handles.airfoilXYTable, 'Data');
+variablename = get_var_name(handles);
+airfoil = evalin('base', [variablename ';']);
 close Airfoil
 
-function rowsTxt_Callback(hObject, eventdata, handles)
-% hObject    handle to rowsTxt (see GCBO)
+
+% --- Executes on selection change in listbox1.
+function listbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of rowsTxt as text
-%        str2double(get(hObject,'String')) returns contents of rowsTxt as a double
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox1
 
 
 % --- Executes during object creation, after setting all properties.
-function rowsTxt_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to rowsTxt (see GCBO)
+function listbox1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-% Hint: edit controls usually have a white background on Windows.
+% Hint: listbox controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
+function [var] = get_var_name(handles)
+list_entries = get(handles.listbox1,'String');
+index_selected = get(handles.listbox1,'Value');
+var = list_entries{index_selected(1)};
 
-% --- Executes on button press in updateTableButton.
-function updateTableButton_Callback(hObject, eventdata, handles)
-% hObject    handle to updateTableButton (see GCBO)
+
+% --- Executes on button press in updateListboxButton.
+function updateListboxButton_Callback(hObject, eventdata, handles)
+% hObject    handle to updateListboxButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-rows = str2double(get(handles.rowsTxt,'string'));
-num_elem = cell(rows,2);
-num_elem(:,:) = {''};
-set(handles.airfoilXYTable,'Data',num_elem);
-set(handles.airfoilXYTable,'ColumnEditable',true(1,2));
-set(handles.airfoilXYTable);
+vars = evalin('base','who');
+set(handles.listbox1,'String',vars)

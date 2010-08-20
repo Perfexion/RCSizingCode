@@ -269,7 +269,8 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton8 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    
+    figure(1)
+    TDView()
     
     
 
@@ -1096,8 +1097,8 @@ function vTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 Airfoil
 uiwait
-global airfoil
-
+global airfoil vTailAirfoil
+vTailAirfoil = airfoil;
 
 % --- Executes on button press in hTailNonNACAAirfoilButton.
 function hTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
@@ -1106,8 +1107,8 @@ function hTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 Airfoil
 uiwait
-global airfoil
-
+global airfoil hTailAirfoil
+hTailAirfoil=airfoil;
 
 % --- Executes on button press in wingNonNACAAirfoilButton.
 function wingNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
@@ -1116,8 +1117,8 @@ function wingNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 Airfoil
 uiwait
-global airfoil
-
+global airfoil wingAirfoil
+wingAirfoil=airfoil;
 
 function wingAirfoilTxt_Callback(hObject, eventdata, handles)
 % hObject    handle to wingAirfoilTxt (see GCBO)
