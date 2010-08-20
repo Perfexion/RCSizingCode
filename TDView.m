@@ -5,7 +5,11 @@ function [] = TDView()
     NumProfiles = 40;
     
     %% Body
+<<<<<<< HEAD
       try 
+=======
+    try 
+>>>>>>> origin/dev
         profin = evalin('base', 'BodyProfiles');
     catch exception
         z = circle([0,0], 100, .5);
@@ -14,12 +18,24 @@ function [] = TDView()
         profin(:,4:5) = z(:, 1:2);
         profin(:,6) = 1;
     end
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/dev
     profiles = profileinterp(profin,NumProfiles*2);
     
     
-    bodyprofile = profiles(1,3:3:end);
-    bodyprofile = sin(bodyprofile.*pi);
+    
+    try 
+        bodyprofile = evalin('base', 'BodySpline');
+    catch exception        
+        bodyprofile = profiles(1,3:3:end);
+        bodyprofile = sin(bodyprofile.*pi);
+    end
+    if length(bodyprofile) ~= length(profiles(1,3:3:end))
+       x = linspace(0,1,length(bodyprofile));
+       bodyprofile = interp1(x, bodyprofile, profiles(1,3:3:end));
+    end
     for i = 1:length(profiles(1,:))/3
        profiles(:,i*3-2:i*3-1) = profiles(:,i*3-2:i*3-1).*(bodyprofile(i))*AirDevilsOut{2,2};
        profiles(:,i*3) = profiles(:,i*3)*AirDevilsOut{1,2};
