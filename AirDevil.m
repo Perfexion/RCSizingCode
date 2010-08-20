@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 18-Aug-2010 11:15:12
+% Last Modified by GUIDE v2.5 19-Aug-2010 23:21:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1093,9 +1093,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in vTailNonNACAAirfoilButton.
-function vTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
-% hObject    handle to vTailNonNACAAirfoilButton (see GCBO)
+% --- Executes on button press in vTailImportAirfoilButton.
+function vTailImportAirfoilButton_Callback(hObject, eventdata, handles)
+% hObject    handle to vTailImportAirfoilButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 Airfoil
@@ -1103,9 +1103,9 @@ uiwait
 global airfoil vTailAirfoil
 vTailAirfoil = airfoil;
 
-% --- Executes on button press in hTailNonNACAAirfoilButton.
-function hTailNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
-% hObject    handle to hTailNonNACAAirfoilButton (see GCBO)
+% --- Executes on button press in hTailImportAirfoilButton.
+function hTailImportAirfoilButton_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailImportAirfoilButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 Airfoil
@@ -1113,9 +1113,9 @@ uiwait
 global airfoil hTailAirfoil
 hTailAirfoil=airfoil;
 
-% --- Executes on button press in wingNonNACAAirfoilButton.
-function wingNonNACAAirfoilButton_Callback(hObject, eventdata, handles)
-% hObject    handle to wingNonNACAAirfoilButton (see GCBO)
+% --- Executes on button press in wingImportAirfoilAirfoilButton.
+function wingImportAirfoilAirfoilButton_Callback(hObject, eventdata, handles)
+% hObject    handle to wingImportAirfoilAirfoilButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 Airfoil
