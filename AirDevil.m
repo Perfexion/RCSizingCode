@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 20-Aug-2010 10:20:29
+% Last Modified by GUIDE v2.5 22-Aug-2010 15:27:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -68,7 +68,7 @@ function runButton_Callback(hObject, eventdata, handles)
     WingAC = str2double(get(handles.wingACTxt,'String')); %Location of aerodynamic center of wing behind nose (in ft)
     WingQCSweep = str2double(get(handles.wingQCSweepTxt,'String')); %Quarter Chord Sweep of the Wing
     WingTC = str2double(get(handles.wingTCTxt,'String')); %Wing Thickness Ratio
-    WingDihadrial = str2double(get(handles.wingDihadrialTxt,'String')); %Wing Dihadrial
+    WingDihedral = str2double(get(handles.wingDihedralTxt,'String')); %Wing Dihedral
     
     % -- Horizontal Tail
     HTailAR = str2double(get(handles.hTailARTxt,'String')); %Aspect Ratio
@@ -77,7 +77,7 @@ function runButton_Callback(hObject, eventdata, handles)
     HTailAC = str2double(get(handles.hTailACTxt,'String')); %Location of aerodynamic center of horizontal tail behind nose (in ft)
     HTailTC = str2double(get(handles.hTailTCTxt,'String')); %Horizontal Tail Thickness Ratio
     HTailQCSweep = str2double(get(handles.hTailQCSweepTxt,'String')); %Horizontal Tail Quarter Chord Sweep
-    HTailDihadrial = str2double(get(handles.hTailDihadrialTxt,'String')); %Horizontal Tail Dihadrial
+    HTailDihedral = str2double(get(handles.hTailDihedralTxt,'String')); %Horizontal Tail Dihedral
     
     % -- Vertical Tail
     VTailAR = str2double(get(handles.vTailARTxt,'String')); %Aspect Ratio
@@ -198,7 +198,7 @@ function runButton_Callback(hObject, eventdata, handles)
             'Wing Aspect Ratio' WingAR;
             'Wing Taper Ratio' WingTPR;
             'Wing Quarter Chord Sweep' WingQCSweep;
-            'Wing Dihadrial' WingDihadrial;
+            'Wing Dihedral' WingDihedral;
             'Wing Thickness Ratio' WingTC;
             'Wing Airfoil' WingAirfoil;
             'Wing Weight Estimate' WingWeight;
@@ -214,7 +214,7 @@ function runButton_Callback(hObject, eventdata, handles)
             'HTail Aspect Ratio' HTailAR;
             'HTail Taper Ratio' HTailTPR;
             'HTail Quarter Chord Sweep' HTailQCSweep;
-            'HTail Dihadrial' HTailDihadrial;
+            'HTail Dihedral' HTailDihedral;
             'HTail Thickness Ratio' HTailTC;
             'HTail Airfoil' HTailAirfoil;
             'HTail Weight Estimate' HTailWeight;
@@ -245,6 +245,7 @@ function runButton_Callback(hObject, eventdata, handles)
             'Atmospheric Temperature' AtmTmp;
             'Atmospheric Pressure' AtmTmp;
             'Atmospheric Density' AtmDns;
+            'FlightWeight' NewWeight;
             };%Collection of Outs
         
             %%Write Output Data to a file
@@ -1008,18 +1009,18 @@ end
 
 
 
-function hTailDihadrialTxt_Callback(hObject, eventdata, handles)
-% hObject    handle to hTailDihadrialTxt (see GCBO)
+function hTailDihedralTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailDihedralTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of hTailDihadrialTxt as text
-%        str2double(get(hObject,'String')) returns contents of hTailDihadrialTxt as a double
+% Hints: get(hObject,'String') returns contents of hTailDihedralTxt as text
+%        str2double(get(hObject,'String')) returns contents of hTailDihedralTxt as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function hTailDihadrialTxt_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to hTailDihadrialTxt (see GCBO)
+function hTailDihedralTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hTailDihedralTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1031,18 +1032,18 @@ end
 
 
 
-function wingDihadrialTxt_Callback(hObject, eventdata, handles)
-% hObject    handle to wingDihadrialTxt (see GCBO)
+function wingDihedralTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to wingDihedralTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of wingDihadrialTxt as text
-%        str2double(get(hObject,'String')) returns contents of wingDihadrialTxt as a double
+% Hints: get(hObject,'String') returns contents of wingDihedralTxt as text
+%        str2double(get(hObject,'String')) returns contents of wingDihedralTxt as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function wingDihadrialTxt_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to wingDihadrialTxt (see GCBO)
+function wingDihedralTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to wingDihedralTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
