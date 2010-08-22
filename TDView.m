@@ -40,7 +40,7 @@ function [] = TDView(solidFlag)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-    solidcurve(profiles);
+        solidcurve(profiles);
     else
     end
     
@@ -79,7 +79,7 @@ function [] = TDView(solidFlag)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-    solidcurve(wingprofiles);
+        solidcurve(wingprofiles);
     else
     end
   
@@ -119,7 +119,7 @@ function [] = TDView(solidFlag)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-    solidcurve(htailprofiles);
+        solidcurve(htailprofiles);
     else
     end
 
@@ -157,7 +157,7 @@ function [] = TDView(solidFlag)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-    solidcurve(vtailprofiles);
+        solidcurve(vtailprofiles);
     else
     end
     
