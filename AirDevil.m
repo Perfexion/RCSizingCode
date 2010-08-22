@@ -59,7 +59,7 @@ function runButton_Callback(hObject, eventdata, handles)
     
     % -- Fuselage
     FuselageLength = str2double(get(handles.fuselageLengthTxt,'String')); %ft
-    FuselageDiameter = 8/12; %ft
+    FuselageDiameter = str2double(get(handles.fuselageDiameterTxt,'String')); %ft
     
     % -- Main Wing
     WingAR = str2double(get(handles.wingARTxt,'String')); %Aspect Ratio
