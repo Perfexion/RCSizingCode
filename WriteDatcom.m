@@ -55,7 +55,7 @@ function [] = WriteDatcom()
     fid = fopen(strcat('test','.dcm'),'w');
     fprintf(fid, '%s\n', 'DIM FT');
     %Flight Conditions
-    fprintf(fid, '%s\n', strcat(' $FLTCON LOOP=2.0,NMACH=1.0,MACH(1)=0.1,'));
+    fprintf(fid, '%s\n', strcat(' $FLTCON LOOP=2.0,NMACH=1.0,MACH(1)=0.1,TR=1.0,'));
     fprintf(fid, '%s\n', strcat('  NALT=1,ALT(1)=',num2str(AirDevilsOut{57,2},'%6.2f'),',NALPHA=20.0,'));
     fprintf(fid, '%s\n', strcat('  ALSCHD(1)=-9.0,-8.0,-7.0,-6.0,-5.0,-4.0,-3.0,-2.0,'));
     fprintf(fid, '%s\n', strcat('   -1.0,0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0$'));
@@ -162,6 +162,7 @@ function [] = WriteDatcom()
     fclose(fid);
     
     system('test.dcm');
+    axis equal;
     
 end
 
