@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 22-Aug-2010 15:27:38
+% Last Modified by GUIDE v2.5 22-Aug-2010 19:29:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,6 +53,8 @@ function runButton_Callback(hObject, eventdata, handles)
     Continue = true;
     % -- Weight Guess
     Weight = str2double(get(handles.weightGuessTxt,'String')); %lbs
+    XCg = str2double(get(handles.xCgTxt,'String')); %XCg
+    ZCg = str2double(get(handles.zCgTxt,'String')); %ZCg
     
     % -- Flight Conditions;
     VTarget =str2double(get(handles.vTargetTxt,'String')); %Target Velocity (ft/s) - For scale, 88 corresponds to 60 MPH
@@ -69,6 +71,8 @@ function runButton_Callback(hObject, eventdata, handles)
     WingQCSweep = str2double(get(handles.wingQCSweepTxt,'String')); %Quarter Chord Sweep of the Wing
     WingTC = str2double(get(handles.wingTCTxt,'String')); %Wing Thickness Ratio
     WingDihedral = str2double(get(handles.wingDihedralTxt,'String')); %Wing Dihedral
+    WingZ = str2double(get(handles.wingZTxt,'String')); %Wing Tail Z
+    WingIncidence = str2double(get(handles.wingIncidenceTxt,'String')); %Wing Incidence Angle
     
     % -- Horizontal Tail
     HTailAR = str2double(get(handles.hTailARTxt,'String')); %Aspect Ratio
@@ -78,6 +82,8 @@ function runButton_Callback(hObject, eventdata, handles)
     HTailTC = str2double(get(handles.hTailTCTxt,'String')); %Horizontal Tail Thickness Ratio
     HTailQCSweep = str2double(get(handles.hTailQCSweepTxt,'String')); %Horizontal Tail Quarter Chord Sweep
     HTailDihedral = str2double(get(handles.hTailDihedralTxt,'String')); %Horizontal Tail Dihedral
+    HTailZ = str2double(get(handles.hTailZTxt,'String')); %Horizontal Tail Z
+    HTailIncidence = str2double(get(handles.hTailIncidenceTxt,'String')); %Horizontal Tail Incidence Angle
     
     % -- Vertical Tail
     VTailAR = str2double(get(handles.vTailARTxt,'String')); %Aspect Ratio
@@ -246,6 +252,12 @@ function runButton_Callback(hObject, eventdata, handles)
             'Atmospheric Pressure' AtmTmp;
             'Atmospheric Density' AtmDns;
             'FlightWeight' NewWeight;
+            'Wing Incidence' WingIncidence;
+            'Wing Z' WingZ;
+            'HTail Incidence' HTailIncidence;
+            'HTail Z' HTailZ;
+            'X Cg' XCg;
+            'Z Cg' ZCg;
             };%Collection of Outs
         
             %%Write Output Data to a file
@@ -1183,3 +1195,142 @@ function solidWorksCheckBox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of solidWorksCheckBox
+
+
+
+function hTailIncidenceTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailIncidenceTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of hTailIncidenceTxt as text
+%        str2double(get(hObject,'String')) returns contents of hTailIncidenceTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function hTailIncidenceTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hTailIncidenceTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function wingIncidenceTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to wingIncidenceTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of wingIncidenceTxt as text
+%        str2double(get(hObject,'String')) returns contents of wingIncidenceTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function wingIncidenceTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to wingIncidenceTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function xCgTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to xCgTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of xCgTxt as text
+%        str2double(get(hObject,'String')) returns contents of xCgTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function xCgTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to xCgTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function zCgTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to zCgTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of zCgTxt as text
+%        str2double(get(hObject,'String')) returns contents of zCgTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function zCgTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to zCgTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function hTailZTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailZTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of hTailZTxt as text
+%        str2double(get(hObject,'String')) returns contents of hTailZTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function hTailZTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hTailZTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function wingZTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to wingZTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of wingZTxt as text
+%        str2double(get(hObject,'String')) returns contents of wingZTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function wingZTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to wingZTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
