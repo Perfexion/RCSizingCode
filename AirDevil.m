@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 22-Aug-2010 19:29:12
+% Last Modified by GUIDE v2.5 23-Aug-2010 00:14:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -280,12 +280,15 @@ function runButton_Callback(hObject, eventdata, handles)
        Weight = NewWeight;      
     end
 
-    % --- Executes on button press in pushbutton8.
-function pushbutton8_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton8 (see GCBO)
+    % --- Executes on button press in TDViewButton.
+function TDViewButton_Callback(hObject, eventdata, handles)
+% hObject    handle to TDViewButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     figure(1)
+    v = get(handles.vTailAirfoilButtonPanel,'SelectedObject');
+    h = get(handles.hTailAirfoilButtonPanel,'SelectedObject');
+    w = get(handles.wingAirfoilButtonPanel,'SelectedObject');
     if (get(handles.solidWorksCheckBox,'Value') == get(handles.solidWorksCheckBox,'Max'))
        % Checkbox is checked
        solidFlag=1;
@@ -293,7 +296,61 @@ function pushbutton8_Callback(hObject, eventdata, handles)
        % Checkbox is not checked
        solidFlag=0;
     end
-    TDView(solidFlag)
+    
+    switch get(h,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        N4=str2double(get(handles.hTailAirfoilTxt, 'String'));
+        [hTailx,hTaily] = nacafour(N4,100);
+        hTailAirfoil = [hTailx',hTaily'];
+ 
+    case 'NACA5RadioButton'
+        'naca5'
+ 
+    case 'customAirfoilRadioButton'
+        global hTailAirfoil
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+    end
+    
+    switch get(v,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        N4=str2double(get(handles.vTailAirfoilTxt, 'String'));
+        [vTailx,vTaily] = nacafour(N4,100);
+        vTailAirfoil = [vTailx',vTaily'];
+ 
+    case 'NACA5RadioButton'
+        'naca5'
+ 
+    case 'customAirfoilRadioButton'
+        global vTailAirfoil
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+    end
+    
+    switch get(w,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        N4=str2double(get(handles.wingAirfoilTxt, 'String'));
+        [wingx,wingy] = nacafour(N4,100);
+        wingAirfoil = [wingx',wingy'];
+ 
+    case 'NACA5RadioButton'
+        'naca5'
+ 
+    case 'customAirfoilRadioButton'
+        global wingAirfoil
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+    end
+    TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     
 
@@ -1334,3 +1391,141 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+
+
+
+function edit51_Callback(hObject, eventdata, handles)
+% hObject    handle to edit51 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit51 as text
+%        str2double(get(hObject,'String')) returns contents of edit51 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit51_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit51 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit50_Callback(hObject, eventdata, handles)
+% hObject    handle to edit50 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit50 as text
+%        str2double(get(hObject,'String')) returns contents of edit50 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit50_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit50 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit49_Callback(hObject, eventdata, handles)
+% hObject    handle to edit49 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit49 as text
+%        str2double(get(hObject,'String')) returns contents of edit49 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit49_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit49 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes when selected object is changed in vTailAirfoilButtonPanel.
+function vTailAirfoilButtonPanel_SelectionChangeFcn(hObject, eventdata, handles)
+%retrieve GUI data, i.e. the handles structure
+handles = guidata(hObject);    
+switch get(hObject,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        set(handles.vTailImportAirfoilButton, 'Visible', 'Off');
+ 
+    case 'NACA5RadioButton'
+        set(handles.vTailImportAirfoilButton, 'Visible', 'Off');
+ 
+    case 'customAirfoilRadioButton'
+        set(handles.vTailImportAirfoilButton, 'Visible', 'On');
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+end
+%updates the handles structure
+guidata(hObject, handles);
+
+
+% --- Executes when selected object is changed in hTailAirfoilButtonPanel.
+function hTailAirfoilButtonPanel_SelectionChangeFcn(hObject, eventdata, handles)
+%retrieve GUI data, i.e. the handles structure
+handles = guidata(hObject);    
+switch get(hObject,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        set(handles.hTailImportAirfoilButton, 'Visible', 'Off');
+ 
+    case 'NACA5RadioButton'
+        set(handles.hTailImportAirfoilButton, 'Visible', 'Off');
+ 
+    case 'customAirfoilRadioButton'
+        set(handles.hTailImportAirfoilButton, 'Visible', 'On');
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+end
+%updates the handles structure
+guidata(hObject, handles);
+
+
+% --- Executes when selected object is changed in wingAirfoilButtonPanel.
+function wingAirfoilButtonPanel_SelectionChangeFcn(hObject, eventdata, handles)
+%retrieve GUI data, i.e. the handles structure
+handles = guidata(hObject);    
+switch get(hObject,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        set(handles.wingImportAirfoilAirfoilButton, 'Visible', 'Off');
+ 
+    case 'NACA5RadioButton'
+        set(handles.wingImportAirfoilAirfoilButton, 'Visible', 'Off');
+ 
+    case 'customAirfoilRadioButton'
+        set(handles.wingImportAirfoilAirfoilButton, 'Visible', 'On');
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+end
+%updates the handles structure
+guidata(hObject, handles);

@@ -1,4 +1,4 @@
-function [] = TDView(solidFlag)
+function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
 
     AirDevilsOut = evalin('base', 'AirDevilsOut');
@@ -14,7 +14,7 @@ function [] = TDView(solidFlag)
         profin(:,4:5) = z(:, 1:2);
         profin(:,6) = 1;
     end
-        profiles = profileinterp(profin,NumProfiles);
+        profiles = ProfileInterp(profin,NumProfiles);
     try 
         bodyprofile = evalin('base', 'BodySpline');
     catch exception        
@@ -45,7 +45,7 @@ function [] = TDView(solidFlag)
     end
     
     %% Main Wing
-    foilprofile = AirfoilBuilder('NACA 0010', 100);
+    foilprofile = wingAirfoil;
     foilprofin = foilprofile(:,1:2);
     foilprofin(:,3) = 0;
     foilprofin(:,4:5) = foilprofile(:,1:2);
@@ -84,7 +84,7 @@ function [] = TDView(solidFlag)
     end
   
     %% Horizontal Tail
-    hfoilprofile = AirfoilBuilder('NACA 0010', 100);
+    hfoilprofile = hTailAirfoil;
     hfoilprofin = hfoilprofile(:,1:2);
     hfoilprofin(:,3) = 0;
     hfoilprofin(:,4:5) = hfoilprofile(:,1:2);
@@ -125,7 +125,7 @@ function [] = TDView(solidFlag)
 
     %% Vertical Tail
     
-    vfoilprofile = AirfoilBuilder('NACA 0010', 100);
+    vfoilprofile = vTailAirfoil;
     vfoilprofin = vfoilprofile(:,1:2);
     vfoilprofin(:,3) = 0;
     vfoilprofin(:,4:5) = vfoilprofile(:,1:2);
