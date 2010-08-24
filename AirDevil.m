@@ -71,7 +71,7 @@ function TDViewButton_Callback(hObject, eventdata, handles)
         iaf.designation=get(handles.hTailNACA5AirfoilTxt, 'String');
         iaf.n=100;
         iaf.HalfCosineSpacing=1;
-        iaf.wantFile=1;
+        iaf.wantFile=0;
         iaf.datFilePath='./'; % Current folder
         iaf.is_finiteTE=0;
         af = naca5gen(iaf);
@@ -99,7 +99,7 @@ function TDViewButton_Callback(hObject, eventdata, handles)
         iaf.designation=get(handles.hTailNACA5AirfoilTxt, 'String');
         iaf.n=100;
         iaf.HalfCosineSpacing=1;
-        iaf.wantFile=1;
+        iaf.wantFile=0;
         iaf.datFilePath='./'; % Current folder
         iaf.is_finiteTE=0;
         af = naca5gen(iaf);
@@ -127,7 +127,7 @@ function TDViewButton_Callback(hObject, eventdata, handles)
         iaf.designation=get(handles.wingNACA5AirfoilTxt, 'String');
         iaf.n=100;
         iaf.HalfCosineSpacing=1;
-        iaf.wantFile=1;
+        iaf.wantFile=0;
         iaf.datFilePath='./'; % Current folder
         iaf.is_finiteTE=0;
         af = naca5gen(iaf);
