@@ -140,21 +140,38 @@ function [] = WriteDatcom()
     fprintf(fid, '%s\n', '$');
     %Wing
     %fprintf(fid,'%s\n', AirDevilsOut{16,2});
-    fprintf(fid, '%s\n', 'NACA-W-6-643-618');
+    if length(AirDevilsOut{16,2}) == 4
+        fprintf(fid, '%s\n', strcat('NACA-W-4-',AirDevilsOut{16,2}));
+    elseif length(AirDevilsOut{16,2}) == 5
+        fprintf(fid, '%s\n', strcat('NACA-W-5-',AirDevilsOut{16,2}));
+    else
+        fprintf(fid, '%s\n', 'NACA-W-5-14412');
+    end
     
     fprintf(fid,'%s\n', strcat(' $WGPLNF CHRDR=',num2str(AirDevilsOut{8,2},'%6.2f'),',CHRDTP=',num2str(AirDevilsOut{9,2},'%6.2f'),',SSPN=', num2str(AirDevilsOut{7,2}/2,'%6.2f'),','));
     fprintf(fid,'%s\n', strcat('  SSPNE=',num2str(AirDevilsOut{7,2}/2-AirDevilsOut{3,2}*.45,'%6.2f'),',SAVSI=',num2str(AirDevilsOut{13,2}*180/pi,'%6.2f'),','));
     fprintf(fid,'%s\n', strcat('  CHSTAT=0.25,TWISTA=0.0,DHDADI=',num2str(AirDevilsOut{14,2}*180/pi,'%6.2f'),',TYPE=1.0','$'));
     %HTail
     %fprintf(fid,'%s\n', AirDevilsOut{32,2});
-    fprintf(fid, '%s\n', 'NACA-H-6-643-618');
+    if length(AirDevilsOut{32,2}) == 4
+        fprintf(fid, '%s\n', strcat('NACA-H-4-',AirDevilsOut{32,2}));
+    elseif length(AirDevilsOut{32,2}) == 5
+        fprintf(fid, '%s\n', strcat('NACA-H-5-',AirDevilsOut{32,2}));
+    else
+        fprintf(fid, '%s\n', 'NACA-H-4-0010');
+    end
     fprintf(fid,'%s\n', strcat(' $HTPLNF CHRDR=',num2str(AirDevilsOut{24,2},'%6.2f'),',CHRDTP=',num2str(AirDevilsOut{25,2},'%6.2f'),',SSPN=', num2str(AirDevilsOut{23,2}/2,'%6.2f'),','));
     fprintf(fid,'%s\n', strcat('  SSPNE=',num2str(AirDevilsOut{23,2}/2-AirDevilsOut{3,2}*.2,'%6.2f'),',SAVSI=',num2str(AirDevilsOut{29,2}*180/pi,'%6.2f'),','));
     fprintf(fid,'%s\n', strcat('  CHSTAT=0.25,TWISTA=0.0,DHDADI=',num2str(AirDevilsOut{30,2}*180/pi,'%6.2f'),',TYPE=1.0','$'));
 
     %VTail
-    %fprintf(fid,'%s\n', AirDevilsOut{32,2});
-    fprintf(fid, '%s\n', 'NACA-T-6-643-618');
+    if length(AirDevilsOut{46,2}) == 4
+        fprintf(fid, '%s\n', strcat('NACA-V-4-',AirDevilsOut{46,2}));
+    elseif length(AirDevilsOut{46,2}) == 5
+        fprintf(fid, '%s\n', strcat('NACA-V-5-',AirDevilsOut{46,2}));
+    else
+        fprintf(fid, '%s\n', 'NACA-V-4-0010');
+    end
     fprintf(fid,'%s\n', strcat(' $VTPLNF CHRDR=',num2str(AirDevilsOut{39,2},'%6.2f'),',CHRDTP=',num2str(AirDevilsOut{40,2},'%6.2f'),',SSPN=', num2str(AirDevilsOut{38,2},'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  SSPNE=',num2str(AirDevilsOut{38,2},'%6.2f'),',SAVSI=',num2str(AirDevilsOut{44,2}*180/pi,'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  CHSTAT=0.25,TYPE=1.0$'));
@@ -162,7 +179,7 @@ function [] = WriteDatcom()
     fclose(fid);
     
     system('test.dcm');
-    axis equal;
+    axis equal
     
 end
 
