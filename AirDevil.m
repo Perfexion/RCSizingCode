@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 23-Aug-2010 00:14:45
+% Last Modified by GUIDE v2.5 23-Aug-2010 20:50:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -43,13 +43,109 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes on button press in runButton.
-function runButton_Callback(hObject, eventdata, handles)
-% hObject    handle to runButton (see GCBO)
+    % --- Executes on button press in TDViewButton.
+function TDViewButton_Callback(hObject, eventdata, handles)
+% hObject    handle to TDViewButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+    figure(1)
+    v = get(handles.vTailAirfoilButtonPanel,'SelectedObject');
+    h = get(handles.hTailAirfoilButtonPanel,'SelectedObject');
+    w = get(handles.wingAirfoilButtonPanel,'SelectedObject');
+    if (get(handles.solidWorksCheckBox,'Value') == get(handles.solidWorksCheckBox,'Max'))
+       % Checkbox is checked
+       solidFlag=1;
+    else
+       % Checkbox is not checked
+       solidFlag=0;
+    end
     
+    switch get(h,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        N4=str2double(get(handles.hTailAirfoilTxt, 'String'));
+        [hTailx,hTaily] = nacafour(N4,100);
+        hTailAirfoil = [hTailx',hTaily'];
+        HTailAirfoil = get(handles.hTailAirfoilTxt, 'String');
+ 
+    case 'NACA5RadioButton'
+        iaf.designation=get(handles.hTailNACA5AirfoilTxt, 'String');
+        iaf.n=100;
+        iaf.HalfCosineSpacing=1;
+        iaf.wantFile=1;
+        iaf.datFilePath='./'; % Current folder
+        iaf.is_finiteTE=0;
+        af = naca5gen(iaf);
+        hTailAirfoil = [af.x,af.z];
+        HTailAirfoil = get(handles.hTailNACA5AirfoilTxt, 'String');
+ 
+    case 'customAirfoilRadioButton'
+        global hTailAirfoil
+        HTailAirfoil = 'custom';
 
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+    end
+    
+    switch get(v,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        N4=str2double(get(handles.vTailAirfoilTxt, 'String'));
+        [vTailx,vTaily] = nacafour(N4,100);
+        vTailAirfoil = [vTailx',vTaily'];
+        VTailAirfoil = get(handles.vTailAirfoilTxt, 'String');
+ 
+    case 'NACA5RadioButton'
+        iaf.designation=get(handles.hTailNACA5AirfoilTxt, 'String');
+        iaf.n=100;
+        iaf.HalfCosineSpacing=1;
+        iaf.wantFile=1;
+        iaf.datFilePath='./'; % Current folder
+        iaf.is_finiteTE=0;
+        af = naca5gen(iaf);
+        vTailAirfoil = [af.x,af.z];
+        VTailAirfoil = get(handles.vTailNACA5AirfoilTxt, 'String');
+ 
+    case 'customAirfoilRadioButton'
+        global vTailAirfoil
+        VTailAirfoil = 'custom';
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+    end
+    
+    switch get(w,'Tag')   % Get Tag of selected object
+    case 'NACA4RadioButton'
+        N4=str2double(get(handles.wingAirfoilTxt, 'String'));
+        [wingx,wingy] = nacafour(N4,100);
+        wingAirfoil = [wingx',wingy'];
+        WingAirfoil = get(handles.wingAirfoilTxt, 'String');
+ 
+    case 'NACA5RadioButton'
+        iaf.designation=get(handles.wingNACA5AirfoilTxt, 'String');
+        iaf.n=100;
+        iaf.HalfCosineSpacing=1;
+        iaf.wantFile=1;
+        iaf.datFilePath='./'; % Current folder
+        iaf.is_finiteTE=0;
+        af = naca5gen(iaf);
+        wingAirfoil = [af.x,af.z];
+        WingAirfoil = get(handles.wingNACA5AirfoilTxt, 'String');
+    
+ 
+    case 'customAirfoilRadioButton'
+        global wingAirfoil
+        WingAirfoil = 'custom';
+
+    otherwise
+       % Code for when there is no match.
+       'otherwise'
+ 
+    end
+    
+    %%Sizing Code 
     Continue = true;
     % -- Weight Guess
     Weight = str2double(get(handles.weightGuessTxt,'String')); %lbs
@@ -74,6 +170,7 @@ function runButton_Callback(hObject, eventdata, handles)
     WingZ = str2double(get(handles.wingZTxt,'String')); %Wing Tail Z
     WingIncidence = str2double(get(handles.wingIncidenceTxt,'String')); %Wing Incidence Angle
     
+    
     % -- Horizontal Tail
     HTailAR = str2double(get(handles.hTailARTxt,'String')); %Aspect Ratio
     HTailTPR = str2double(get(handles.hTailTPRTxt,'String')); %Taper Ratio
@@ -85,6 +182,7 @@ function runButton_Callback(hObject, eventdata, handles)
     HTailZ = str2double(get(handles.hTailZTxt,'String')); %Horizontal Tail Z
     HTailIncidence = str2double(get(handles.hTailIncidenceTxt,'String')); %Horizontal Tail Incidence Angle
     
+    
     % -- Vertical Tail
     VTailAR = str2double(get(handles.vTailARTxt,'String')); %Aspect Ratio
     VTailTPR = str2double(get(handles.vTailTPRTxt,'String')); %Taper Ratio
@@ -92,6 +190,7 @@ function runButton_Callback(hObject, eventdata, handles)
     VTailAC = str2double(get(handles.vTailACTxt,'String')); %Location of aerodynamic center of vertical tail behind nose (in ft)
     VTailTC = str2double(get(handles.vTailTCTxt,'String')); %Vertical Tail Thickness Ratio
     VTailQCSweep = str2double(get(handles.vTailQCSweepTxt,'String')); %Vertical Tail Quarter Chord Sweep
+    
     
     % -- Electronics
     MotorWeight = str2double(get(handles.motorWeightTxt,'String')); % Weight of Motor (lbs) - Hacker B50-12XL weighs .74 lbs
@@ -118,7 +217,7 @@ function runButton_Callback(hObject, eventdata, handles)
        WingCR = WingS/(WingB*(1+WingTPR)/2); %Wing Root Chord (ft)
        WingCT = WingTPR*WingCR; %Wing Tip Chord (ft)
        WingCBar = WingS/WingB; %Wing Mean Aerodynamic Chord (ft)
-       WingAirfoil = 'NACA 0010'; %Wing Airfoil 
+
        
        % -- Horizontal Tail
        HTailS = HTailVR*WingCBar*WingS/(HTailAC-WingAC); %Horizontal tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
@@ -126,7 +225,6 @@ function runButton_Callback(hObject, eventdata, handles)
        HTailCR = HTailS/(HTailB*(1+HTailTPR)/2); %Horizontal Tail Root Chord (ft)
        HTailCT = HTailTPR*HTailCR; %Horizontal Tail Tip Chord (ft)
        HTailCBar = HTailS/HTailB; %Horizontal Tail Mean Aerodynamic Chord (ft)
-       HTailAirfoil = 'NACA 0010'; %Horizontal Tail Airfoil
        
        % -- Horizontal Tail
        VTailS = VTailVR*WingB*WingS/(VTailAC-WingAC); %Vertical tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
@@ -134,7 +232,7 @@ function runButton_Callback(hObject, eventdata, handles)
        VTailCR = VTailS/(VTailB*(1+VTailTPR)/2); %Vertical Tail Root Chord (ft)
        VTailCT = VTailTPR*VTailCR; %Vertical Tail Tip Chord (ft)
        VTailCBar = VTailS/VTailB; %Vertical Tail Mean Aerodynamic Chord (ft)
-       VTailAirfoil = 'NACA 0010'; %Vertical Tail Airfoil
+
        
        %% Drag Buildup
        
@@ -279,77 +377,7 @@ function runButton_Callback(hObject, eventdata, handles)
        end
        Weight = NewWeight;      
     end
-
-    % --- Executes on button press in TDViewButton.
-function TDViewButton_Callback(hObject, eventdata, handles)
-% hObject    handle to TDViewButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-    figure(1)
-    v = get(handles.vTailAirfoilButtonPanel,'SelectedObject');
-    h = get(handles.hTailAirfoilButtonPanel,'SelectedObject');
-    w = get(handles.wingAirfoilButtonPanel,'SelectedObject');
-    if (get(handles.solidWorksCheckBox,'Value') == get(handles.solidWorksCheckBox,'Max'))
-       % Checkbox is checked
-       solidFlag=1;
-    else
-       % Checkbox is not checked
-       solidFlag=0;
-    end
     
-    switch get(h,'Tag')   % Get Tag of selected object
-    case 'NACA4RadioButton'
-        N4=str2double(get(handles.hTailAirfoilTxt, 'String'));
-        [hTailx,hTaily] = nacafour(N4,100);
-        hTailAirfoil = [hTailx',hTaily'];
- 
-    case 'NACA5RadioButton'
-        'naca5'
- 
-    case 'customAirfoilRadioButton'
-        global hTailAirfoil
-
-    otherwise
-       % Code for when there is no match.
-       'otherwise'
- 
-    end
-    
-    switch get(v,'Tag')   % Get Tag of selected object
-    case 'NACA4RadioButton'
-        N4=str2double(get(handles.vTailAirfoilTxt, 'String'));
-        [vTailx,vTaily] = nacafour(N4,100);
-        vTailAirfoil = [vTailx',vTaily'];
- 
-    case 'NACA5RadioButton'
-        'naca5'
- 
-    case 'customAirfoilRadioButton'
-        global vTailAirfoil
-
-    otherwise
-       % Code for when there is no match.
-       'otherwise'
- 
-    end
-    
-    switch get(w,'Tag')   % Get Tag of selected object
-    case 'NACA4RadioButton'
-        N4=str2double(get(handles.wingAirfoilTxt, 'String'));
-        [wingx,wingy] = nacafour(N4,100);
-        wingAirfoil = [wingx',wingy'];
- 
-    case 'NACA5RadioButton'
-        'naca5'
- 
-    case 'customAirfoilRadioButton'
-        global wingAirfoil
-
-    otherwise
-       % Code for when there is no match.
-       'otherwise'
- 
-    end
     TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     
@@ -1394,18 +1422,18 @@ end
 
 
 
-function edit51_Callback(hObject, eventdata, handles)
-% hObject    handle to edit51 (see GCBO)
+function wingNACA5AirfoilTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to wingNACA5AirfoilTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit51 as text
-%        str2double(get(hObject,'String')) returns contents of edit51 as a double
+% Hints: get(hObject,'String') returns contents of wingNACA5AirfoilTxt as text
+%        str2double(get(hObject,'String')) returns contents of wingNACA5AirfoilTxt as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit51_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit51 (see GCBO)
+function wingNACA5AirfoilTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to wingNACA5AirfoilTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1417,18 +1445,18 @@ end
 
 
 
-function edit50_Callback(hObject, eventdata, handles)
-% hObject    handle to edit50 (see GCBO)
+function hTailNACA5AirfoilTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to hTailNACA5AirfoilTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit50 as text
-%        str2double(get(hObject,'String')) returns contents of edit50 as a double
+% Hints: get(hObject,'String') returns contents of hTailNACA5AirfoilTxt as text
+%        str2double(get(hObject,'String')) returns contents of hTailNACA5AirfoilTxt as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit50_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit50 (see GCBO)
+function hTailNACA5AirfoilTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hTailNACA5AirfoilTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1440,18 +1468,18 @@ end
 
 
 
-function edit49_Callback(hObject, eventdata, handles)
-% hObject    handle to edit49 (see GCBO)
+function vTailNACA5AirfoilTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to vTailNACA5AirfoilTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit49 as text
-%        str2double(get(hObject,'String')) returns contents of edit49 as a double
+% Hints: get(hObject,'String') returns contents of vTailNACA5AirfoilTxt as text
+%        str2double(get(hObject,'String')) returns contents of vTailNACA5AirfoilTxt as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit49_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit49 (see GCBO)
+function vTailNACA5AirfoilTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to vTailNACA5AirfoilTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1529,3 +1557,10 @@ switch get(hObject,'Tag')   % Get Tag of selected object
 end
 %updates the handles structure
 guidata(hObject, handles);
+
+
+% --- Executes when figure1 is resized.
+function figure1_ResizeFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
