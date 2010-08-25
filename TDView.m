@@ -50,7 +50,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     foilprofin(:,3) = 0;
     foilprofin(:,4:5) = foilprofile(:,1:2);
     foilprofin(:,6) = 1;
-    foilprofiles = profileinterp(foilprofin,NumProfiles);
+    foilprofiles = ProfileInterp(foilprofin,NumProfiles);
     
     for i = 1:length(foilprofiles(1,:))/3
        foilprofiles(:,i*3-2:i*3-1) = foilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{8,2}-(AirDevilsOut{8,2}-AirDevilsOut{9,2}).*foilprofiles(1,i*3)./foilprofiles(1,end)); %Scale Airfoil Profiles by chord
