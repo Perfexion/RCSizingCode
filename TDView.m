@@ -55,9 +55,14 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     rotmat = [cos(AirDevilsOut{62,2}) -sin(AirDevilsOut{62,2});...
         sin(AirDevilsOut{62,2}) cos(AirDevilsOut{62,2})];
     
+    
     for i = 1:length(foilprofiles(1,:))/3
        foilprofiles(:,i*3-2:i*3-1) = foilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{8,2}-(AirDevilsOut{8,2}-AirDevilsOut{9,2}).*foilprofiles(1,i*3)./foilprofiles(1,end)); %Scale Airfoil Profiles by chord
        foilprofiles(:,i*3) = foilprofiles(:,i*3)*AirDevilsOut{7,2}/2; %Scale the wing span
+       % the following incidence angle rotation rotates about the leading
+       % edge of the airfoil. It would make more aerodynamic sense to
+       % rotate about the aerodynamic center of the airfoil. Maybe someone
+       % can add an adjustment term to do this? 
        for j = 1:length(foilprofiles(:,1))
         foilprofiles(j,i*3-2:i*3-1) = foilprofiles(j,i*3-2:i*3-1)*rotmat; %Adjust for Incidence Angle
        end
