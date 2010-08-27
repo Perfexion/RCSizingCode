@@ -288,6 +288,15 @@ function TDViewButton_Callback(hObject, eventdata, handles)
        
        if abs(NewWeight-Weight)/Weight < .01
            Continue = false;
+           
+           %% Calculate Ideal Flight Conditions
+           VIdealLD = sqrt(2*NewWeight/(AtmDns*WingS)*sqrt(K/(CdZero)));
+           %% Weight Balance Calcs
+           
+            XCg = (WingWeight*WingAC+HTailWeight*HTailAC+VTailWeight*VTailAC...
+                +FuselageWeight*1/3*FuselageLength+MotorWeight*4/12)/...
+                (WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
+                MotorWeight+BatteryWeight*8/12);
                %% Organize Function Output
                AirDevilsOut = {'Fuselage Length' double(FuselageLength);
             'Fuselage Diameter' FuselageDiameter;
@@ -356,6 +365,8 @@ function TDViewButton_Callback(hObject, eventdata, handles)
             'HTail Z' HTailZ;
             'X Cg' XCg;
             'Z Cg' ZCg;
+            'Weight' NewWeight;
+            'Minimum Lift/Drag Velocity' VIdealLD;
             };%Collection of Outs
         
             %%Write Output Data to a file
@@ -379,6 +390,7 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     end
     
     TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
+    WriteDatcom
     
     
 

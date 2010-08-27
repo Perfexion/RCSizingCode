@@ -44,6 +44,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     else
     end
     
+    rotmat = zeros(2,2);
     %% Main Wing
     foilprofile = wingAirfoil;
     foilprofin = foilprofile(:,1:2);
@@ -51,10 +52,15 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     foilprofin(:,4:5) = foilprofile(:,1:2);
     foilprofin(:,6) = 1;
     foilprofiles = ProfileInterp(foilprofin,NumProfiles);
+    rotmat = [cos(AirDevilsOut{62,2}) -sin(AirDevilsOut{62,2});...
+        sin(AirDevilsOut{62,2}) cos(AirDevilsOut{62,2})];
     
     for i = 1:length(foilprofiles(1,:))/3
        foilprofiles(:,i*3-2:i*3-1) = foilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{8,2}-(AirDevilsOut{8,2}-AirDevilsOut{9,2}).*foilprofiles(1,i*3)./foilprofiles(1,end)); %Scale Airfoil Profiles by chord
        foilprofiles(:,i*3) = foilprofiles(:,i*3)*AirDevilsOut{7,2}/2; %Scale the wing span
+       for j = 1:length(foilprofiles(:,1))
+        foilprofiles(j,i*3-2:i*3-1) = foilprofiles(j,i*3-2:i*3-1)*rotmat; %Adjust for Incidence Angle
+       end
        foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+(AirDevilsOut{8,2}-AirDevilsOut{9,2})./AirDevilsOut{7,2}*2.*foilprofiles(1,i*3); %adjust for leading edge sweep
        foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+(foilprofiles(1,i*3)*(AirDevilsOut{13,2}-atan(AirDevilsOut{8,2}-AirDevilsOut{9,2})./AirDevilsOut{7,2})/2); %adjust for quarter chord sweep
        foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+AirDevilsOut{5,2}-.25*AirDevilsOut{8,2}; %Adjust back to the located wing AC
@@ -90,10 +96,15 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     hfoilprofin(:,4:5) = hfoilprofile(:,1:2);
     hfoilprofin(:,6) = 1;
     hfoilprofiles = profileinterp(hfoilprofin,NumProfiles/4);
+    rotmat = [cos(AirDevilsOut{64,2}) -sin(AirDevilsOut{64,2});...
+        sin(AirDevilsOut{64,2}) cos(AirDevilsOut{64,2})]; 
     
     for i = 1:length(hfoilprofiles(1,:))/3
        hfoilprofiles(:,i*3-2:i*3-1) = hfoilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{24,2}-(AirDevilsOut{24,2}-AirDevilsOut{25,2}).*hfoilprofiles(1,i*3)./hfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
        hfoilprofiles(:,i*3) = hfoilprofiles(:,i*3)*AirDevilsOut{23,2}/2; %Scale the wing span
+       for j = 1:length(foilprofiles(:,1))
+        hfoilprofiles(j,i*3-2:i*3-1) = hfoilprofiles(j,i*3-2:i*3-1)*rotmat; %Adjust for Incidence Angle
+       end
        hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+(AirDevilsOut{24,2}-AirDevilsOut{25,2})./AirDevilsOut{23,2}*2.*hfoilprofiles(1,i*3); %adjust for leading edge sweep
        hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+(hfoilprofiles(1,i*3)*(AirDevilsOut{29,2}-atan(AirDevilsOut{24,2}-AirDevilsOut{25,2})./AirDevilsOut{23,2})/2); %adjust for quarter chord sweep
        hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+AirDevilsOut{21,2}-.25*AirDevilsOut{24,2}; %Adjust back to the located wing AC
