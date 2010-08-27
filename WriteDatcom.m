@@ -65,8 +65,8 @@ function [] = WriteDatcom()
     %Synths
     fprintf(fid, '%s\n', strcat(' $SYNTHS VERTUP=.TRUE., XCG=',num2str(AirDevilsOut{66,2},'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  ZCG=',num2str(AirDevilsOut{67,2},'%6.2f'),',XW=',num2str(AirDevilsOut{5,2}-1/4*AirDevilsOut{8,2},'%6.2f'),','));
-    fprintf(fid, '%s\n', strcat('  ZW=',num2str(AirDevilsOut{63,2},'%6.2f'),',ALIW=',num2str(AirDevilsOut{62,2},'%6.4f'),',XH=',num2str(AirDevilsOut{21,2}-1/4*AirDevilsOut{24,2},'%6.2f'),','));
-    fprintf(fid, '%s\n', strcat('  ZH=',num2str(AirDevilsOut{65,2},'%6.2f'),',ALIH=',num2str(AirDevilsOut{64,2},'%6.4f'),',XV=',num2str(AirDevilsOut{36,2}-1/4*AirDevilsOut{39,2},'%6.2f'),',ZV=0$'));
+    fprintf(fid, '%s\n', strcat('  ZW=',num2str(AirDevilsOut{63,2},'%6.2f'),',ALIW=',num2str(AirDevilsOut{62,2}*180/pi(),'%6.4f'),',XH=',num2str(AirDevilsOut{21,2}-1/4*AirDevilsOut{24,2},'%6.2f'),','));
+    fprintf(fid, '%s\n', strcat('  ZH=',num2str(AirDevilsOut{65,2},'%6.2f'),',ALIH=',num2str(AirDevilsOut{64,2}*180/pi(),'%6.4f'),',XV=',num2str(AirDevilsOut{36,2}-1/4*AirDevilsOut{39,2},'%6.2f'),',ZV=0$'));
     
     %Body
     fprintf(fid, '%s', strcat(' $BODY NX=',num2str(NumProfiles,'%6.2f'),',ITYPE=1.0,'));
