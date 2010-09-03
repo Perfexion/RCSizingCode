@@ -421,6 +421,13 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     else
        %who knows
     end
+    
+    BatteryCg = (XCg*(WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
+    MotorWeight+BatteryWeight)-(WingWeight*WingAC+HTailWeight*HTailAC...
+    +VTailWeight*VTailAC+FuselageWeight*1/3*FuselageLength+...
+    MotorWeight*MotorCg))/BatteryWeight;
+    Aircraft.BatteryCg = BatteryCg;
+    assignin('base', 'Aircraft', Aircraft);
 
         
         
