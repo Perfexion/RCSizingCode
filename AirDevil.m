@@ -193,9 +193,9 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     
     % -- Electronics
     MotorWeight = str2double(get(handles.motorWeightTxt,'String')); % Weight of Motor (lbs) - Hacker B50-12XL weighs .74 lbs
-    MotorCg = .3; 
+    MotorCg = str2double(get(handles.motorCgTxt,'String')); % Weight of Motor
     BatteryWeight = str2double(get(handles.batteryWeightTxt,'String')); % Weight of Battery (lbs)
-    BatteryCg = WingAC*.5; 
+    BatteryCg = str2double(get(handles.batteryCgTxt,'String')); % Weight of Motor 
     PayloadWeight = str2double(get(handles.payloadWeightTxt,'String')); %Weight of Payload (lbs)
     PayloadCg = WingAC; 
 
@@ -427,6 +427,7 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     +VTailWeight*VTailAC+FuselageWeight*1/3*FuselageLength+...
     MotorWeight*MotorCg))/BatteryWeight;
     Aircraft.BatteryCg = BatteryCg;
+    set(handles.batteryCgTxt, 'String', BatteryCg);
     assignin('base', 'Aircraft', Aircraft);
 
         
