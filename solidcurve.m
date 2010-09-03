@@ -7,8 +7,11 @@ function solidcurve(N)
 [m,n]=size(N);
 t(:,1)=1:m;
 
-Excel = actxserver ('Excel.Application'); 
-File='C:\Users\JT Hoffman\Documents\MATLAB\RCSizingCode\xyzPathMacro.xls'; 
+Excel = actxserver ('Excel.Application');
+Folder=pwd;
+File='\xyzPathMacro.xls';
+File = strcat(Folder, File);
+ 
 if ~exist(File,'file') 
     ExcelWorkbook = Excel.workbooks.Add; 
     ExcelWorkbook.SaveAs(File,1); 
