@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 03-Sep-2010 16:03:58
+% Last Modified by GUIDE v2.5 03-Sep-2010 16:10:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1634,18 +1634,18 @@ function optimizeCheckBox_Callback(hObject, eventdata, handles)
 
 
 
-function batteryCgTxt_Callback(hObject, eventdata, handles)
-% hObject    handle to batteryCgTxt (see GCBO)
+function motorCgTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to motorCgTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of batteryCgTxt as text
-%        str2double(get(hObject,'String')) returns contents of batteryCgTxt as a double
+% Hints: get(hObject,'String') returns contents of motorCgTxt as text
+%        str2double(get(hObject,'String')) returns contents of motorCgTxt as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function batteryCgTxt_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to batteryCgTxt (see GCBO)
+function motorCgTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to motorCgTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
