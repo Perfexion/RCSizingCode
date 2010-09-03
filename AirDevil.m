@@ -193,8 +193,11 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     
     % -- Electronics
     MotorWeight = str2double(get(handles.motorWeightTxt,'String')); % Weight of Motor (lbs) - Hacker B50-12XL weighs .74 lbs
+    MotorCg = .3; 
     BatteryWeight = str2double(get(handles.batteryWeightTxt,'String')); % Weight of Battery (lbs)
+    BatteryCg = WingAC*.5; 
     PayloadWeight = str2double(get(handles.payloadWeightTxt,'String')); %Weight of Payload (lbs)
+    PayloadCg = WingAC; 
 
  %% Atmosphere
 
@@ -289,9 +292,10 @@ function TDViewButton_Callback(hObject, eventdata, handles)
            Continue = false;
            %% Weight Balance Calcs
             XCg = (WingWeight*WingAC+HTailWeight*HTailAC+VTailWeight*VTailAC...
-                +FuselageWeight*1/3*FuselageLength+MotorWeight*4/12)/...
+                +FuselageWeight*1/3*FuselageLength+MotorWeight*MotorCg+...
+                BatteryWeight*BatteryCg)/...
                 (WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
-                MotorWeight+BatteryWeight*8/12);
+                MotorWeight+BatteryWeight);
                %% Organize Function Output
                Aircraft.FuselageLength = double(FuselageLength);
                Aircraft.FuselageDiameter = FuselageDiameter;
@@ -343,8 +347,11 @@ function TDViewButton_Callback(hObject, eventdata, handles)
                Aircraft.VTailDrag = VTailDrag;
                Aircraft.VTailVR = VTailVR;
                Aircraft.BatteryWeight = BatteryWeight;
+               Aircraft.BatteryCg = BatteryCg;
                Aircraft.MotorWeight = MotorWeight;
-               Aircraft.PayloadWeight = PayloadWeight; 
+               Aircraft.MotorCg = MotorCg;
+               Aircraft.PayloadWeight = PayloadWeight;
+               Aircraft.PayloadCg = PayloadCg;
                Aircraft.CdZerp = CdZero;
                Aircraft.MinThrust = MinThrust;
                Aircraft.AtmAlt = AtmAlt;
@@ -357,15 +364,11 @@ function TDViewButton_Callback(hObject, eventdata, handles)
                Aircraft.HTailZ = HTailZ;
                Aircraft.XCg = XCg;
                Aircraft.ZCg = ZCg; 
-               %Collection of Outs
-    
-            
-            assignin('base', 'Aircraft', Aircraft);
-            
-       
+
        end
        Weight = NewWeight;      
     end
+    assignin('base', 'Aircraft', Aircraft);
     WriteDatcom
     %%Optimization
     if (get(handles.optimizeCheckBox,'Value') == get(handles.optimizeCheckBox,'Max'))
@@ -374,20 +377,46 @@ function TDViewButton_Callback(hObject, eventdata, handles)
 
         %read datcom output
         text = fileread('test.out');
-        cl = regexp(text, '\W(?<=IDEAL LIFT COEFFICIENT =    .)\d\d\d\d\d', 'match');
         alpha = regexp(text, '\W(?<=IDEAL ANGLE OF ATTACK =    .)\d\d\d\d\d', 'match');
 
-        cl_ideal_wing=str2double(cl(1));
-        cl_ideal_htail=str2double(cl(2));
-        cl_ideal_vtail=str2double(cl(3));
         alpha_ideal_wing=str2double(alpha(1));
-        alpha_ideal_htail=str2double(alpha(2));
-        alpha_ideal_vtail=str2double(alpha(3));
         
         set(handles.wingIncidenceTxt, 'String', alpha_ideal_wing*pi/180);
         Aircraft.WingIncidence = alpha_ideal_wing*pi/180;
+        assignin('base', 'Aircraft', Aircraft);
         WriteDatcom
         
+        text = fileread('test.out');
+        epsilon = regexp(text, '\W(?<= .0      .....      ).....', 'match');
+        alpha = regexp(text, '\W(?<=IDEAL ANGLE OF ATTACK =    .)\d\d\d\d\d', 'match');
+        
+        epsilon = str2double(epsilon);
+        alpha_ideal_htail=str2double(alpha(2));
+        
+        set(handles.hTailIncidenceTxt, 'String', (epsilon + alpha_ideal_htail)*pi/180);
+        Aircraft.HTailIncidence = (epsilon+alpha_ideal_htail)*pi/180;
+        
+        assignin('base', 'Aircraft', Aircraft);
+        WriteDatcom
+        
+        stopcg = false;
+        count = 0;
+        while stopcg == false
+        Cm = regexp(text, '\W(?<= .0    .....    .....    ).....', 'match');
+        Cm = str2double(Cm)
+        
+            if Cm > .03
+                XCg = XCg * .9;
+            elseif Cm < .03
+                XCg = XCg * 1.1;
+            else
+               stopcg = true; 
+            end
+            Aircraft.XCg = XCg;
+            count = count + 1
+            assignin('base', 'Aircraft', Aircraft);
+            WriteDatcom
+        end
     else
        %who knows
     end

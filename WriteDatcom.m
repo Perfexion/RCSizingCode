@@ -157,7 +157,7 @@ function [] = WriteDatcom()
     %fprintf(fid,'%s\n', AirDevilsOut{32,2});
     if length(Aircraft.HTailAirfoil) == 4
         fprintf(fid, '%s\n', strcat('NACA-H-4-',Aircraft.HTailAirfoil));
-    elseif length(AirDevilsOut{32,2}) == 5
+    elseif length(Aircraft.HTailAirfoil) == 5
         fprintf(fid, '%s\n', strcat('NACA-H-5-',Aircraft.HTailAirfoil));
     else
         fprintf(fid, '%s\n', 'NACA-H-4-0010');
