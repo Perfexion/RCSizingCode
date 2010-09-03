@@ -402,15 +402,16 @@ function TDViewButton_Callback(hObject, eventdata, handles)
         stopcg = false;
         count = 0;
         while stopcg == false
-        Cm = regexp(text, '\W(?<= .0    .....    .....    ).....', 'match');
+        text = fileread('test.out');
+        Cm = regexp(text, '\W(?<= .0    .....    .....    )......', 'match');
         Cm = str2double(Cm)
         
-            if Cm > .03
+            if Cm > .01
                 XCg = XCg * .9;
-            elseif Cm < .03
+            elseif Cm < -.01
                 XCg = XCg * 1.1;
             else
-               stopcg = true; 
+               stopcg = true;
             end
             Aircraft.XCg = XCg;
             count = count + 1
