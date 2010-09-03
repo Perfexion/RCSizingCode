@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 02-Sep-2010 19:20:28
+% Last Modified by GUIDE v2.5 03-Sep-2010 16:03:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -406,10 +406,10 @@ function TDViewButton_Callback(hObject, eventdata, handles)
         Cm = regexp(text, '\W(?<= .0    .....    .....    )......', 'match');
         Cm = str2double(Cm)
         
-            if Cm > .01
-                XCg = XCg * .9;
-            elseif Cm < -.01
-                XCg = XCg * 1.1;
+            if Cm > .003
+                XCg = XCg * .95;
+            elseif Cm < -.003
+                XCg = XCg * 1.05;
             else
                stopcg = true;
             end
@@ -1624,3 +1624,26 @@ function optimizeCheckBox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of optimizeCheckBox
+
+
+
+function batteryCgTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to batteryCgTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of batteryCgTxt as text
+%        str2double(get(hObject,'String')) returns contents of batteryCgTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function batteryCgTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to batteryCgTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
