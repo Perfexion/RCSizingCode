@@ -206,7 +206,7 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     AtmAlt = str2double(get(handles.atmAltTxt, 'String')); %Atmospherica Altitude
     AtmTmp = 518.69 - 3.5662*10^-3 * AtmAlt; %Rankine
     AtmPrs = 1.1376*10^-11 * AtmTmp ^ 5.2560; %lbf/ft^2
-    AtmDns = 6.6277*10^-15 * AtmTmp ^ 4.2560 * (32.1740486); %lbm/ft^3
+    AtmDns = 6.6277*10^-15 * AtmTmp ^ 4.2560; %slug/ft^3
 
     
     %% Begin Main Loop
@@ -421,6 +421,13 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     else
        %who knows
     end
+    
+    BatteryCg = (XCg*(WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
+    MotorWeight+BatteryWeight)-(WingWeight*WingAC+HTailWeight*HTailAC...
+    +VTailWeight*VTailAC+FuselageWeight*1/3*FuselageLength+...
+    MotorWeight*MotorCg))/BatteryWeight;
+    Aircraft.BatteryCg = BatteryCg;
+    assignin('base', 'Aircraft', Aircraft);
 
         
         
