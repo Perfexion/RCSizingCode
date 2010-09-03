@@ -40,7 +40,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(profiles*1200);
+        solidcurve(profiles*25.4*12);
     else
     end
     
@@ -89,7 +89,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(wingprofiles*1200);
+        solidcurve(wingprofiles*25.4*12);
     else
     end
   
@@ -133,7 +133,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(htailprofiles*1200);
+        solidcurve(htailprofiles*25.4*12);
     else
     end
 
@@ -170,7 +170,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(vtailprofiles*1200);
+        solidcurve(vtailprofiles*25.4*12);
     else
     end
     
