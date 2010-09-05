@@ -106,7 +106,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     for i = 1:length(hfoilprofiles(1,:))/3
        hfoilprofiles(:,i*3-2:i*3-1) = hfoilprofiles(:,i*3-2:i*3-1).*(Aircraft.HTailCR-(Aircraft.HTailCR-Aircraft.HTailCT).*hfoilprofiles(1,i*3)./hfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
        hfoilprofiles(:,i*3) = hfoilprofiles(:,i*3)*Aircraft.HTailB/2; %Scale the wing span
-       for j = 1:length(foilprofiles(:,1))
+       for j = 1:length(hfoilprofiles(:,1))
         hfoilprofiles(j,i*3-2:i*3-1) = hfoilprofiles(j,i*3-2:i*3-1)*rotmat; %Adjust for Incidence Angle
        end
        hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+((Aircraft.HTailCR-Aircraft.HTailCT)/4/Aircraft.HTailB*2+tan(Aircraft.HTailQCSweep))*hfoilprofiles(1,i*3);%adjust for quarter chord sweep
