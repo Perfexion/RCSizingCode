@@ -2,6 +2,17 @@ This is the home directory for the RCSizingCode project
 
 The ultimate goal of this code is to have a matlab function which can intelligently perform our RC sizing for us.
 
+The current feature list:
+	The AirDevil.m function in Matlab and related GUI accept a list of sizing parameters (see the GUI for all of them). The code then performs sizing on the weight guess, re-evaluates the new weight, and continues iteratively performing the sizing until an accureate weight and size has been determined. 
+
+	The aircraft dimensions are then ran through DATCOM+ (updated version of the USAF Digital DATCOM, which must be installed in order for this process to work). 
+	
+	If optimization is requested, optimal mounting angles are determined and adjusted. The ideal CG for stability is then determined. The battery location for this ideal CG is also determined. These values will have to be taken into account during detailed modelling (which this program does NOT do). 
+
+	The aircraft geometry is then drawn as a series of 2D profiles in Matlab. (In the future we may make surfaces out of these, but this is not currently a high priority)
+
+	If output to solidworks is requested (and a solidworks part file is open) The program will also draw each 2D profile in solidworks. Because of the method involved this does take some time to draw (Something around 1 profile a second is drawn, so feel free to grab a sandwhich while this process runs. Maybe in the future a faster method will be found. Currently the geometry is exported to excel and the API is called from excel using VB macros. Maybe there is a way to make API calls directly from matlab (or similarly enough directly from system using Matlab's system() function).
+
 There are currently two branches withing git for this project, the master branch, and the dev branch.
 
 Master Branch - 
