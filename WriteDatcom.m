@@ -65,7 +65,7 @@ function [] = WriteDatcom()
     fprintf(fid, '%s\n', strcat(' $OPTINS SREF=', num2str(Aircraft.WingS,'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  CBARR=',num2str(Aircraft.WingCBar,'%6.2f'),',BLREF=',num2str(Aircraft.WingB,'%6.2f'),'$'));
     %Synths
-    fprintf(fid, '%s\n', strcat(' $SYNTHS VERTUP=.TRUE., XCG=',num2str(Aircraft.XCg,'%6.2f'),','));
+    fprintf(fid, '%s\n', strcat(' $SYNTHS VERTUP=.TRUE., XCG=',num2str(Aircraft.XCg,'%6.4f'),','));
     fprintf(fid, '%s\n', strcat('  ZCG=',num2str(Aircraft.ZCg,'%6.2f'),',XW=',num2str(Aircraft.WingAC-1/4*Aircraft.WingCR,'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  ZW=',num2str(Aircraft.WingZ,'%6.2f'),',ALIW=',num2str(Aircraft.WingIncidence*180/pi(),'%6.4f'),',XH=',num2str(Aircraft.HTailAC-1/4*Aircraft.HTailCR,'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  ZH=',num2str(Aircraft.HTailZ,'%6.2f'),',ALIH=',num2str(Aircraft.HTailIncidence*180/pi(),'%6.4f'),',XV=',num2str(Aircraft.VTailAC-1/4*Aircraft.VTailCR,'%6.2f'),',ZV=0$'));

@@ -22,7 +22,7 @@ function varargout = AirDevil(varargin)
 
 % Edit the above text to modify the response to help AirDevil
 
-% Last Modified by GUIDE v2.5 03-Sep-2010 16:28:54
+% Last Modified by GUIDE v2.5 06-Sep-2010 15:24:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -153,6 +153,8 @@ function TDViewButton_Callback(hObject, eventdata, handles)
     
     % -- Flight Conditions;
     VTarget =str2double(get(handles.vTargetTxt,'String')); %Target Velocity (ft/s) - For scale, 88 corresponds to 60 MPH
+    MotorThrust = str2double(get(handles.motorThrustTxt, 'String')); %Motor thrust in lbs
+    StallInput = str2double(get(handles.stallInputTxt, 'String')); %Stall Velocity (optimization converges to this value ft/s
     
     % -- Fuselage
     FuselageLength = str2double(get(handles.fuselageLengthTxt,'String')); %ft
@@ -210,233 +212,253 @@ function TDViewButton_Callback(hObject, eventdata, handles)
 
     
     %% Begin Main Loop
-    while Continue == true
-       %% Calculate Wing & Tail Dimensions
-       
-       % -- Main Wing
-       WingS = Weight/WingLoading; %Wing planform area (ft^2)
-       WingB =  sqrt(WingAR*WingS); %Wing Span (ft)
-       WingCR = WingS/(WingB*(1+WingTPR)/2); %Wing Root Chord (ft)
-       WingCT = WingTPR*WingCR; %Wing Tip Chord (ft)
-       WingCBar = WingS/WingB; %Wing Mean Aerodynamic Chord (ft)
+     vstall = 100;
+     while vstall > StallInput+1 || vstall < StallInput-1
+        while Continue == true
+           %% Calculate Wing & Tail Dimensions
 
-       
-       % -- Horizontal Tail
-       HTailS = HTailVR*WingCBar*WingS/(HTailAC-WingAC); %Horizontal tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
-       HTailB = sqrt(HTailAR*HTailS); %Horizontal Tail Span (ft)
-       HTailCR = HTailS/(HTailB*(1+HTailTPR)/2); %Horizontal Tail Root Chord (ft)
-       HTailCT = HTailTPR*HTailCR; %Horizontal Tail Tip Chord (ft)
-       HTailCBar = HTailS/HTailB; %Horizontal Tail Mean Aerodynamic Chord (ft)
-       
-       % -- Horizontal Tail
-       VTailS = VTailVR*WingB*WingS/(VTailAC-WingAC); %Vertical tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
-       VTailB = sqrt(VTailAR*VTailS); %Vertical Tail Span (ft)
-       VTailCR = VTailS/(VTailB*(1+VTailTPR)/2); %Vertical Tail Root Chord (ft)
-       VTailCT = VTailTPR*VTailCR; %Vertical Tail Tip Chord (ft)
-       VTailCBar = VTailS/VTailB; %Vertical Tail Mean Aerodynamic Chord (ft)
+           % -- Main Wing
+           WingS = Weight/WingLoading; %Wing planform area (ft^2)
+           WingB =  sqrt(WingAR*WingS); %Wing Span (ft)
+           WingCR = WingS/(WingB*(1+WingTPR)/2); %Wing Root Chord (ft)
+           WingCT = WingTPR*WingCR; %Wing Tip Chord (ft)
+           WingCBar = WingS/WingB; %Wing Mean Aerodynamic Chord (ft)
 
-       
-       %% Drag Buildup
-       
-       % -- Friction and Pressure Drag
-       FuselageDrag = DragBuildup('Body', FuselageLength, FuselageDiameter, 0, VTarget)/WingS; %Drag Coefficient due to Fuselage
-       WingDrag = DragBuildup('Wing', WingCBar, WingTC, WingB, VTarget)/WingS; %Drag Coefficient due to Wing
-       HTailDrag = DragBuildup('Wing', HTailCBar, HTailTC, HTailB, VTarget)/WingS; %Drag Coefficient due to HTail
-       VTailDrag = DragBuildup('Wing', VTailCBar, VTailTC, VTailB, VTarget)/WingS; %Drag Coefficient due to VTail
-       
-       CdZero = 1.1*(FuselageDrag + WingDrag + HTailDrag + VTailDrag); %Zero lift drag coefficient for wing, body, and tail
-                      
-       % -- Find Planform Efficiency Factor (k) 
-       e = (1-0.024*WingAR^0.68)*(1-0.227*WingQCSweep^1.615); %I'm assuming this is a data fit equation. I do not have the history for this equation. I assume it came from somewhere in the MAE344 course. I got it from my sizing code from that class. I will do some research and see what I can find
-       eprime = 1/(pi*WingAR*(1/(pi*WingAR*e)+0.38*CdZero)); %Same story here for this equation as for the equation for e. 
-       K = 1/(pi*WingAR*eprime); %Planform Efficiency Factor - I think this version comes from David G. Hull's "Fundumentals of Airplane Flight Mechanics"
-       
-       % -- Find lift Coefficient 
-       Cl = Weight*2/(AtmDns*VTarget^2*WingS); %Lift Coefficient
-      
-       % -- Final Drag Coefficient
-       Cd = CdZero + Cl^2*K; %Drag Coefficient
-       
-       MinThrust = Cd*.5*AtmDns*VTarget^2*WingS; %Thrust Required to maintain VTarget; 
-       
-       %% Structural weight estimates
-       
-       %This section will estimate the weight of each component of the
-       %aircraft based on the component size. 
-       BalsaDensity = .00576; %lb/in^3
-       CarbonFiberDensity = .064667; %lb/in^3
-       WingSparCSA = .0706; %in^2 based on .5in OD and .4 in ID
-       FuselageSparCSA = .149226; %in^2 based in 1in OD and .9in ID
-       WingBCSAE = 1/3*1/24; %Dimensionless
-       FuselageBCSAE = ((FuselageDiameter*.8)^2/4*pi-(FuselageDiameter*.65)^2/4*pi)/...
-           (FuselageDiameter*.8)^2/4*pi*1/24; %Dimensionless
-       
-       WingWeight = WingB*CarbonFiberDensity*WingSparCSA*12 + ...
-           WingBCSAE*BalsaDensity*WingTC*WingS*12^3;
-       HTailWeight = HTailB*CarbonFiberDensity*WingSparCSA*12 + ...
-           WingBCSAE*BalsaDensity*HTailTC*HTailS*12^3;
-       VTailWeight = VTailB*CarbonFiberDensity*WingSparCSA*12 + ...
-           WingBCSAE*BalsaDensity*VTailTC*VTailS*12^3;
-       FuselageWeight = FuselageLength*CarbonFiberDensity*FuselageSparCSA*12 + ...
-           FuselageBCSAE*BalsaDensity*FuselageLength*FuselageDiameter^2/4*pi*12^3;
-       
-       %% Weight Summation
-       
-       NewWeight = WingWeight + HTailWeight + VTailWeight + FuselageWeight...
-           + BatteryWeight + MotorWeight + PayloadWeight; %Sum all weights (lbm)
-       
-       
-       %% Loop Break Test
-       
-       if abs(NewWeight-Weight)/Weight < .01
-           Continue = false;
-           %% Weight Balance Calcs
-            XCg = (WingWeight*WingAC+HTailWeight*HTailAC+VTailWeight*VTailAC...
-                +FuselageWeight*1/3*FuselageLength+MotorWeight*MotorCg+...
-                BatteryWeight*BatteryCg)/...
-                (WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
-                MotorWeight+BatteryWeight);
-               %% Organize Function Output
-               Aircraft.FuselageLength = double(FuselageLength);
-               Aircraft.FuselageDiameter = FuselageDiameter;
-               Aircraft.FuselageWeight = FuselageWeight;
-               Aircraft.FuselageDrag = FuselageDrag;
-               Aircraft.WingAC = WingAC;
-               Aircraft.WingS = WingS;
-               Aircraft.WingB = WingB;
-               Aircraft.WingCR = WingCR;
-               Aircraft.WingCT = WingCT;
-               Aircraft.WingCBar = WingCBar;
-               Aircraft.WingAR = WingAR;
-               Aircraft.WingTPR = WingTPR;
-               Aircraft.WingQCSweep = WingQCSweep;
-               Aircraft.WingDihedral = WingDihedral;
-               Aircraft.WingTC = WingTC;
-               Aircraft.WingAirfoil = WingAirfoil;
-               Aircraft.WingWeight = WingWeight;
-               Aircraft.WingDrag = WingDrag;
-               Aircraft.WingLoading = WingLoading;
-               Aircraft.WingK = K;
-               Aircraft.HTailAC = HTailAC;
-               Aircraft.HTailS = HTailS;
-               Aircraft.HTailB = HTailB;
-               Aircraft.HTailCR = HTailCR;
-               Aircraft.HTailCT = HTailCT;
-               Aircraft.HTailCBar = HTailCBar;
-               Aircraft.HTailAR = HTailAR;
-               Aircraft.HTailTPR = HTailTPR;
-               Aircraft.HTailQCSweep = HTailQCSweep;
-               Aircraft.HTailDihedral = HTailDihedral;
-               Aircraft.HTailTC = HTailTC;
-               Aircraft.HTailAirfoil = HTailAirfoil;
-               Aircraft.HTailWeight = HTailWeight;
-               Aircraft.HTailDrag = HTailDrag;
-               Aircraft.HTailVR = HTailVR;
-               Aircraft.VTailAC = VTailAC;
-               Aircraft.VTailS = VTailS;
-               Aircraft.VTailB = VTailB;
-               Aircraft.VTailCR = VTailCR;
-               Aircraft.VTailCT = VTailCT;
-               Aircraft.VTailCBar = VTailCBar;
-               Aircraft.VTailAR = VTailAR;
-               Aircraft.VTailTPR = VTailTPR;
-               Aircraft.VTailQCSweep = VTailQCSweep;
-               Aircraft.VTailTC = VTailTC;
-               Aircraft.VTailAirfoil = VTailAirfoil;
-               Aircraft.VTailWeight = VTailWeight;
-               Aircraft.VTailDrag = VTailDrag;
-               Aircraft.VTailVR = VTailVR;
-               Aircraft.BatteryWeight = BatteryWeight;
-               Aircraft.BatteryCg = BatteryCg;
-               Aircraft.MotorWeight = MotorWeight;
-               Aircraft.MotorCg = MotorCg;
-               Aircraft.PayloadWeight = PayloadWeight;
-               Aircraft.PayloadCg = PayloadCg;
-               Aircraft.CdZerp = CdZero;
-               Aircraft.MinThrust = MinThrust;
-               Aircraft.AtmAlt = AtmAlt;
-               Aircraft.AtmTmp = AtmTmp;
-               Aircraft.AtmDns = AtmDns; 
-               Aircraft.FlightWeight = NewWeight;
-               Aircraft.WingIncidence = WingIncidence;
-               Aircraft.WingZ = WingZ;
-               Aircraft.HTailIncidence = HTailIncidence;
-               Aircraft.HTailZ = HTailZ;
-               Aircraft.XCg = XCg;
-               Aircraft.ZCg = ZCg; 
 
-       end
-       Weight = NewWeight;      
-    end
-    assignin('base', 'Aircraft', Aircraft);
-    WriteDatcom
-    %%Optimization
-    if (get(handles.optimizeCheckBox,'Value') == get(handles.optimizeCheckBox,'Max'))
-        %this code will hopefully be used to optimize our plane, right now
-        %it gets the values of ideal lift coefficient from the datcom output.
+           % -- Horizontal Tail
+           HTailS = HTailVR*WingCBar*WingS/(HTailAC-WingAC); %Horizontal tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
+           HTailB = sqrt(HTailAR*HTailS); %Horizontal Tail Span (ft)
+           HTailCR = HTailS/(HTailB*(1+HTailTPR)/2); %Horizontal Tail Root Chord (ft)
+           HTailCT = HTailTPR*HTailCR; %Horizontal Tail Tip Chord (ft)
+           HTailCBar = HTailS/HTailB; %Horizontal Tail Mean Aerodynamic Chord (ft)
 
-        %read datcom output
-        text = fileread('test.out');
-        alpha = regexp(text, '\W(?<=IDEAL ANGLE OF ATTACK =    .)\d\d\d\d\d', 'match');
+           % -- Horizontal Tail
+           VTailS = VTailVR*WingB*WingS/(VTailAC-WingAC); %Vertical tail planform area (ft^2) - assumes that the wing AC is directly over (or at least very near) to the aircraft CG. This may not be a good assumption
+           VTailB = sqrt(VTailAR*VTailS); %Vertical Tail Span (ft)
+           VTailCR = VTailS/(VTailB*(1+VTailTPR)/2); %Vertical Tail Root Chord (ft)
+           VTailCT = VTailTPR*VTailCR; %Vertical Tail Tip Chord (ft)
+           VTailCBar = VTailS/VTailB; %Vertical Tail Mean Aerodynamic Chord (ft)
 
-        alpha_ideal_wing=str2double(alpha(1));
-        
-        set(handles.wingIncidenceTxt, 'String', alpha_ideal_wing*pi/180);
-        Aircraft.WingIncidence = alpha_ideal_wing*pi/180;
+
+           %% Drag Buildup
+
+           % -- Friction and Pressure Drag
+           FuselageDrag = DragBuildup('Body', FuselageLength, FuselageDiameter, 0, VTarget)/WingS; %Drag Coefficient due to Fuselage
+           WingDrag = DragBuildup('Wing', WingCBar, WingTC, WingB, VTarget)/WingS; %Drag Coefficient due to Wing
+           HTailDrag = DragBuildup('Wing', HTailCBar, HTailTC, HTailB, VTarget)/WingS; %Drag Coefficient due to HTail
+           VTailDrag = DragBuildup('Wing', VTailCBar, VTailTC, VTailB, VTarget)/WingS; %Drag Coefficient due to VTail
+
+           CdZero = 1.1*(FuselageDrag + WingDrag + HTailDrag + VTailDrag); %Zero lift drag coefficient for wing, body, and tail
+
+           % -- Find Planform Efficiency Factor (k) 
+           e = (1-0.024*WingAR^0.68)*(1-0.227*WingQCSweep^1.615); %I'm assuming this is a data fit equation. I do not have the history for this equation. I assume it came from somewhere in the MAE344 course. I got it from my sizing code from that class. I will do some research and see what I can find
+           eprime = 1/(pi*WingAR*(1/(pi*WingAR*e)+0.38*CdZero)); %Same story here for this equation as for the equation for e. 
+           K = 1/(pi*WingAR*eprime); %Planform Efficiency Factor - I think this version comes from David G. Hull's "Fundumentals of Airplane Flight Mechanics"
+
+           % -- Find lift Coefficient 
+           Cl = Weight*2/(AtmDns*VTarget^2*WingS); %Lift Coefficient
+
+           % -- Final Drag Coefficient
+           Cd = CdZero + Cl^2*K; %Drag Coefficient
+
+           MinThrust = Cd*.5*AtmDns*VTarget^2*WingS; %Thrust Required to maintain VTarget; 
+
+           %% Structural weight estimates
+
+           %This section will estimate the weight of each component of the
+           %aircraft based on the component size. 
+           BalsaDensity = .00576; %lb/in^3
+           CarbonFiberDensity = .064667; %lb/in^3
+           WingSparCSA = .0706; %in^2 based on .5in OD and .4 in ID
+           FuselageSparCSA = .149226; %in^2 based in 1in OD and .9in ID
+           WingBCSAE = 1/3*1/24; %Dimensionless
+           FuselageBCSAE = ((FuselageDiameter*.8)^2/4*pi-(FuselageDiameter*.65)^2/4*pi)/...
+               (FuselageDiameter*.8)^2/4*pi*1/24; %Dimensionless
+
+           WingWeight = WingB*CarbonFiberDensity*WingSparCSA*12 + ...
+               WingBCSAE*BalsaDensity*WingTC*WingS*12^3;
+           HTailWeight = HTailB*CarbonFiberDensity*WingSparCSA*12 + ...
+               WingBCSAE*BalsaDensity*HTailTC*HTailS*12^3;
+           VTailWeight = VTailB*CarbonFiberDensity*WingSparCSA*12 + ...
+               WingBCSAE*BalsaDensity*VTailTC*VTailS*12^3;
+           FuselageWeight = FuselageLength*CarbonFiberDensity*FuselageSparCSA*12 + ...
+               FuselageBCSAE*BalsaDensity*FuselageLength*FuselageDiameter^2/4*pi*12^3;
+
+           %% Weight Summation
+
+           NewWeight = WingWeight + HTailWeight + VTailWeight + FuselageWeight...
+               + BatteryWeight + MotorWeight + PayloadWeight; %Sum all weights (lbm)
+
+
+           %% Loop Break Test
+
+           if abs(NewWeight-Weight)/Weight < .01
+               Continue = false;
+               %% Weight Balance Calcs
+                XCg = (WingWeight*WingAC+HTailWeight*HTailAC+VTailWeight*VTailAC...
+                    +FuselageWeight*1/3*FuselageLength+MotorWeight*MotorCg+...
+                    BatteryWeight*BatteryCg)/...
+                    (WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
+                    MotorWeight+BatteryWeight);
+                   %% Organize Function Output
+                   Aircraft.FuselageLength = double(FuselageLength);
+                   Aircraft.FuselageDiameter = FuselageDiameter;
+                   Aircraft.FuselageWeight = FuselageWeight;
+                   Aircraft.FuselageDrag = FuselageDrag;
+                   Aircraft.WingAC = WingAC;
+                   Aircraft.WingS = WingS;
+                   Aircraft.WingB = WingB;
+                   Aircraft.WingCR = WingCR;
+                   Aircraft.WingCT = WingCT;
+                   Aircraft.WingCBar = WingCBar;
+                   Aircraft.WingAR = WingAR;
+                   Aircraft.WingTPR = WingTPR;
+                   Aircraft.WingQCSweep = WingQCSweep;
+                   Aircraft.WingDihedral = WingDihedral;
+                   Aircraft.WingTC = WingTC;
+                   Aircraft.WingAirfoil = WingAirfoil;
+                   Aircraft.WingWeight = WingWeight;
+                   Aircraft.WingDrag = WingDrag;
+                   Aircraft.WingLoading = WingLoading;
+                   Aircraft.WingK = K;
+                   Aircraft.HTailAC = HTailAC;
+                   Aircraft.HTailS = HTailS;
+                   Aircraft.HTailB = HTailB;
+                   Aircraft.HTailCR = HTailCR;
+                   Aircraft.HTailCT = HTailCT;
+                   Aircraft.HTailCBar = HTailCBar;
+                   Aircraft.HTailAR = HTailAR;
+                   Aircraft.HTailTPR = HTailTPR;
+                   Aircraft.HTailQCSweep = HTailQCSweep;
+                   Aircraft.HTailDihedral = HTailDihedral;
+                   Aircraft.HTailTC = HTailTC;
+                   Aircraft.HTailAirfoil = HTailAirfoil;
+                   Aircraft.HTailWeight = HTailWeight;
+                   Aircraft.HTailDrag = HTailDrag;
+                   Aircraft.HTailVR = HTailVR;
+                   Aircraft.VTailAC = VTailAC;
+                   Aircraft.VTailS = VTailS;
+                   Aircraft.VTailB = VTailB;
+                   Aircraft.VTailCR = VTailCR;
+                   Aircraft.VTailCT = VTailCT;
+                   Aircraft.VTailCBar = VTailCBar;
+                   Aircraft.VTailAR = VTailAR;
+                   Aircraft.VTailTPR = VTailTPR;
+                   Aircraft.VTailQCSweep = VTailQCSweep;
+                   Aircraft.VTailTC = VTailTC;
+                   Aircraft.VTailAirfoil = VTailAirfoil;
+                   Aircraft.VTailWeight = VTailWeight;
+                   Aircraft.VTailDrag = VTailDrag;
+                   Aircraft.VTailVR = VTailVR;
+                   Aircraft.BatteryWeight = BatteryWeight;
+                   Aircraft.BatteryCg = BatteryCg;
+                   Aircraft.MotorWeight = MotorWeight;
+                   Aircraft.MotorCg = MotorCg;
+                   Aircraft.PayloadWeight = PayloadWeight;
+                   Aircraft.PayloadCg = PayloadCg;
+                   Aircraft.CdZerp = CdZero;
+                   Aircraft.MinThrust = MinThrust;
+                   Aircraft.MotorThrust = MotorThrust;
+                   Aircraft.AtmAlt = AtmAlt;
+                   Aircraft.AtmTmp = AtmTmp;
+                   Aircraft.AtmDns = AtmDns; 
+                   Aircraft.FlightWeight = NewWeight;
+                   Aircraft.WingIncidence = WingIncidence;
+                   Aircraft.WingZ = WingZ;
+                   Aircraft.HTailIncidence = HTailIncidence;
+                   Aircraft.HTailZ = HTailZ;
+                   Aircraft.XCg = XCg;
+                   Aircraft.ZCg = ZCg; 
+
+           end
+           Weight = NewWeight;      
+        end
+        Continue = true;
         assignin('base', 'Aircraft', Aircraft);
         WriteDatcom
-        
-        text = fileread('test.out');
-        epsilon = regexp(text, '\W(?<= .0      .....      ).....', 'match');
-        alpha = regexp(text, '\W(?<=IDEAL ANGLE OF ATTACK =    .)\d\d\d\d\d', 'match');
-        
-        epsilon = str2double(epsilon);
-        alpha_ideal_htail=str2double(alpha(2));
-        
-        set(handles.hTailIncidenceTxt, 'String', (epsilon + alpha_ideal_htail)*pi/180);
-        Aircraft.HTailIncidence = (epsilon+alpha_ideal_htail)*pi/180;
-        
-        assignin('base', 'Aircraft', Aircraft);
-        WriteDatcom
-        
-        stopcg = false;
-        count = 0;
-        while stopcg == false
-        text = fileread('test.out');
-        Cm = regexp(text, '\W(?<= .0    .....    .....    )......', 'match');
-        Cm = str2double(Cm)
-        
-            if Cm > .003
-                XCg = XCg * .95;
-            elseif Cm < -.003
-                XCg = XCg * 1.05;
-            else
-               stopcg = true;
-            end
-            Aircraft.XCg = XCg;
-            count = count + 1
+        %%Optimization
+        if (get(handles.optimizeCheckBox,'Value') == get(handles.optimizeCheckBox,'Max'))
+            %this code will hopefully be used to optimize our plane, right now
+            %it gets the values of ideal lift coefficient from the datcom output.
+
+            %read datcom output
+            text = fileread('test.out');
+            alpha = regexp(text, '\W(?<=IDEAL ANGLE OF ATTACK =    .)\d\d\d\d\d', 'match');
+
+            alpha_ideal_wing=str2double(alpha(1));
+
+            set(handles.wingIncidenceTxt, 'String', alpha_ideal_wing*pi/180);
+            Aircraft.WingIncidence = alpha_ideal_wing*pi/180;
             assignin('base', 'Aircraft', Aircraft);
             WriteDatcom
-        end
-    else
-       %who knows
-    end
-    
-    BatteryCg = (XCg*(WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
-    MotorWeight+BatteryWeight)-(WingWeight*WingAC+HTailWeight*HTailAC...
-    +VTailWeight*VTailAC+FuselageWeight*1/3*FuselageLength+...
-    MotorWeight*MotorCg))/BatteryWeight;
-    Aircraft.BatteryCg = BatteryCg;
-    set(handles.batteryCgTxt, 'String', BatteryCg);
-    assignin('base', 'Aircraft', Aircraft);
 
-        
-        
-        
-        
-        
-        %% Run TDVIew
-        TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
+            text = fileread('test.out');
+            epsilon = regexp(text, '\W(?<= .0      .....      ).....', 'match');
+            alpha = regexp(text, '\W(?<=IDEAL ANGLE OF ATTACK =    .)\d\d\d\d\d', 'match');
+
+            epsilon = str2double(epsilon);
+            alpha_ideal_htail=str2double(alpha(2));
+
+            set(handles.hTailIncidenceTxt, 'String', (epsilon + alpha_ideal_htail)*pi/180);
+            Aircraft.HTailIncidence = (epsilon+alpha_ideal_htail)*pi/180;
+
+            assignin('base', 'Aircraft', Aircraft);
+            WriteDatcom
+
+            stopcg = false;
+            count = 0;
+            S = 1;
+            while stopcg == false
+                text = fileread('test.out');
+                Cm = regexp(text, '\W(?<= .0    .....    .....    )......', 'match');
+                Cm = str2double(Cm)
+                cnt = 1;
+                if S ~= sign(Cm)
+                    cnt=cnt+1;
+                else
+                end
+                S = sign(Cm);
+                
+                if Cm > .003
+                    XCg = XCg * .9^(1/cnt);
+                elseif Cm < -.003
+                    XCg = XCg * 1.1^(1/cnt);
+                else
+                   stopcg = true;
+                end
+                Aircraft.XCg = XCg;
+                count = count + 1
+                assignin('base', 'Aircraft', Aircraft);
+                WriteDatcom
+            end
+
+            %calculations for payload
+            text = fileread('test.out');
+            Cd1 = str2double(regexp(text, '\W(?<= .0    .).....', 'match'));
+            Cl1 = str2double(regexp(text, '\W(?<= .0     ....     ).....', 'match'));
+            vstall = sqrt(Aircraft.FlightWeight/(.5*Aircraft.AtmDns*1.2*Aircraft.WingS))
+            if vstall > 22
+                WingLoading = WingLoading*.95;
+            elseif vstall < 18
+                WingLoading = WingLoading*1.05;
+            end
+        else
+           %nothing
+        end
+
+        BatteryCg = (XCg*(WingWeight+HTailWeight+VTailWeight+FuselageWeight+...
+        MotorWeight+BatteryWeight)-(WingWeight*WingAC+HTailWeight*HTailAC...
+        +VTailWeight*VTailAC+FuselageWeight*1/3*FuselageLength+...
+        MotorWeight*MotorCg))/BatteryWeight;
+        Aircraft.BatteryCg = BatteryCg;
+        Aircraft.WingLoading = WingLoading;
+        set(handles.wingLoadingTxt, 'String', WingLoading);
+        set(handles.batteryCgTxt, 'String', BatteryCg);
+        assignin('base', 'Aircraft', Aircraft);
+    end   
+            
+    %% Run TDVIew
+    TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     
     
@@ -1693,6 +1715,29 @@ function motorThrustTxt_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function motorThrustTxt_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to motorThrustTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function stallInputTxt_Callback(hObject, eventdata, handles)
+% hObject    handle to stallInputTxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of stallInputTxt as text
+%        str2double(get(hObject,'String')) returns contents of stallInputTxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function stallInputTxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to stallInputTxt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
