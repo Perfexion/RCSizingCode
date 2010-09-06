@@ -1,7 +1,7 @@
 function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
-    
+    format long;
 
-    AirDevilsOut = evalin('base', 'AirDevilsOut');
+    Aircraft = evalin('base', 'Aircraft');
     NumProfiles = 40;
     
     %% Body
@@ -26,8 +26,8 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
        bodyprofile = interp1(x, bodyprofile, profiles(1,3:3:end));
     end
     for i = 1:length(profiles(1,:))/3
-       profiles(:,i*3-2:i*3-1) = profiles(:,i*3-2:i*3-1).*(bodyprofile(i))*AirDevilsOut{2,2};
-       profiles(:,i*3) = profiles(:,i*3)*AirDevilsOut{1,2};
+       profiles(:,i*3-2:i*3-1) = profiles(:,i*3-2:i*3-1).*(bodyprofile(i))*Aircraft.FuselageDiameter;
+       profiles(:,i*3) = profiles(:,i*3)*Aircraft.FuselageLength;
     end
     hold off
     plot3(profiles(:,1), profiles(:,2), profiles(:,3));
@@ -40,7 +40,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(profiles);
+        solidcurve(profiles*25.4*12);
     else
     end
     
@@ -52,13 +52,13 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     foilprofin(:,4:5) = foilprofile(:,1:2);
     foilprofin(:,6) = 1;
     foilprofiles = ProfileInterp(foilprofin,NumProfiles);
-    rotmat = [cos(AirDevilsOut{62,2}) -sin(AirDevilsOut{62,2});...
-        sin(AirDevilsOut{62,2}) cos(AirDevilsOut{62,2})];
+    rotmat = [cos(Aircraft.WingIncidence) -sin(Aircraft.WingIncidence);...
+        sin(Aircraft.WingIncidence) cos(Aircraft.WingIncidence)];
     
     
     for i = 1:length(foilprofiles(1,:))/3
-       foilprofiles(:,i*3-2:i*3-1) = foilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{8,2}-(AirDevilsOut{8,2}-AirDevilsOut{9,2}).*foilprofiles(1,i*3)./foilprofiles(1,end)); %Scale Airfoil Profiles by chord
-       foilprofiles(:,i*3) = foilprofiles(:,i*3)*AirDevilsOut{7,2}/2; %Scale the wing span
+       foilprofiles(:,i*3-2:i*3-1) = foilprofiles(:,i*3-2:i*3-1).*(Aircraft.WingCR-(Aircraft.WingCR-Aircraft.WingCT).*foilprofiles(1,i*3)./foilprofiles(1,end)); %Scale Airfoil Profiles by chord
+       foilprofiles(:,i*3) = foilprofiles(:,i*3)*Aircraft.WingB/2; %Scale the wing span
        % the following incidence angle rotation rotates about the leading
        % edge of the airfoil. It would make more aerodynamic sense to
        % rotate about the aerodynamic center of the airfoil. Maybe someone
@@ -66,9 +66,9 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
        for j = 1:length(foilprofiles(:,1))
         foilprofiles(j,i*3-2:i*3-1) = foilprofiles(j,i*3-2:i*3-1)*rotmat; %Adjust for Incidence Angle
        end
-       foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+((AirDevilsOut{8,2}-AirDevilsOut{9,2})/4+tan(AirDevilsOut{13,2}))/AirDevilsOut{7,2}*2*foilprofiles(1,i*3);%adjust for quarter chord sweep
-       foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+AirDevilsOut{5,2}-.25*AirDevilsOut{8,2}; %Adjust back to the located wing AC
-       foilprofiles(:,i*3-1) = foilprofiles(:,i*3-1)+tan(AirDevilsOut{14,2})*foilprofiles(1,i*3); %Adjust for the dihadrial
+       foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+((Aircraft.WingCR-Aircraft.WingCT)/4/Aircraft.WingB*2+tan(Aircraft.WingQCSweep))*foilprofiles(1,i*3);%adjust for quarter chord sweep
+       foilprofiles(:,i*3-2) = foilprofiles(:,i*3-2)+Aircraft.WingAC-.25*Aircraft.WingCR; %Adjust back to the located wing AC
+       foilprofiles(:,i*3-1) = foilprofiles(:,i*3-1)+tan(Aircraft.WingDihedral)*foilprofiles(1,i*3); %Adjust for the dihadrial
     end
     foilprofiles2 = foilprofiles;
     foilprofiles2(:, 3:3:end) = foilprofiles(:,3:3:end)*-1;
@@ -89,7 +89,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(wingprofiles);
+        solidcurve(wingprofiles*25.4*12);
     else
     end
   
@@ -100,18 +100,18 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     hfoilprofin(:,4:5) = hfoilprofile(:,1:2);
     hfoilprofin(:,6) = 1;
     hfoilprofiles = profileinterp(hfoilprofin,NumProfiles/4);
-    rotmat = [cos(AirDevilsOut{64,2}) -sin(AirDevilsOut{64,2});...
-        sin(AirDevilsOut{64,2}) cos(AirDevilsOut{64,2})]; 
+    rotmat = [cos(Aircraft.HTailIncidence) -sin(Aircraft.HTailIncidence);...
+        sin(Aircraft.HTailIncidence) cos(Aircraft.HTailIncidence)]; 
     
     for i = 1:length(hfoilprofiles(1,:))/3
-       hfoilprofiles(:,i*3-2:i*3-1) = hfoilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{24,2}-(AirDevilsOut{24,2}-AirDevilsOut{25,2}).*hfoilprofiles(1,i*3)./hfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
-       hfoilprofiles(:,i*3) = hfoilprofiles(:,i*3)*AirDevilsOut{23,2}/2; %Scale the wing span
-       for j = 1:length(foilprofiles(:,1))
+       hfoilprofiles(:,i*3-2:i*3-1) = hfoilprofiles(:,i*3-2:i*3-1).*(Aircraft.HTailCR-(Aircraft.HTailCR-Aircraft.HTailCT).*hfoilprofiles(1,i*3)./hfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
+       hfoilprofiles(:,i*3) = hfoilprofiles(:,i*3)*Aircraft.HTailB/2; %Scale the wing span
+       for j = 1:length(hfoilprofiles(:,1))
         hfoilprofiles(j,i*3-2:i*3-1) = hfoilprofiles(j,i*3-2:i*3-1)*rotmat; %Adjust for Incidence Angle
        end
-       hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+((AirDevilsOut{24,2}-AirDevilsOut{25,2})/4+tan(AirDevilsOut{29,2}))/AirDevilsOut{23,2}*2*foilprofiles(1,i*3);%adjust for quarter chord sweep
-       hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+AirDevilsOut{21,2}-.25*AirDevilsOut{24,2}; %Adjust back to the located wing AC
-       hfoilprofiles(:,i*3-1) = hfoilprofiles(:,i*3-1)+tan(AirDevilsOut{30,2})*hfoilprofiles(1,i*3); %Adjust for the dihadrial
+       hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+((Aircraft.HTailCR-Aircraft.HTailCT)/4/Aircraft.HTailB*2+tan(Aircraft.HTailQCSweep))*hfoilprofiles(1,i*3);%adjust for quarter chord sweep
+       hfoilprofiles(:,i*3-2) = hfoilprofiles(:,i*3-2)+Aircraft.HTailAC-.25*Aircraft.HTailCR; %Adjust back to the located wing AC
+       hfoilprofiles(:,i*3-1) = hfoilprofiles(:,i*3-1)+tan(Aircraft.HTailDihedral)*hfoilprofiles(1,i*3); %Adjust for the dihadrial
     end
     hfoilprofiles2 = hfoilprofiles;
     hfoilprofiles2(:, 3:3:end) = hfoilprofiles(:,3:3:end)*-1;
@@ -133,7 +133,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(htailprofiles);
+        solidcurve(htailprofiles*25.4*12);
     else
     end
 
@@ -147,10 +147,10 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     vfoilprofiles = profileinterp(vfoilprofin,NumProfiles/4);
     
     for i = 1:length(vfoilprofiles(1,:))/3
-       vfoilprofiles(:,i*3-2:i*3-1) = vfoilprofiles(:,i*3-2:i*3-1).*(AirDevilsOut{39,2}-(AirDevilsOut{39,2}-AirDevilsOut{40,2}).*vfoilprofiles(1,i*3)./vfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
-       vfoilprofiles(:,i*3) = vfoilprofiles(:,i*3)*AirDevilsOut{38,2}; %Scale the wing span
-       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+((AirDevilsOut{39,2}-AirDevilsOut{40,2})/4+tan(AirDevilsOut{44,2}))/AirDevilsOut{38,2}*foilprofiles(1,i*3); %adjust for quarter chord sweep
-       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+AirDevilsOut{36,2}-.25*AirDevilsOut{39,2}; %Adjust back to the located wing AC
+       vfoilprofiles(:,i*3-2:i*3-1) = vfoilprofiles(:,i*3-2:i*3-1).*(Aircraft.VTailCR-(Aircraft.VTailCR-Aircraft.VTailCT).*vfoilprofiles(1,i*3)./vfoilprofiles(1,end)); %Scale Airfoil Profiles by chord
+       vfoilprofiles(:,i*3) = vfoilprofiles(:,i*3)*Aircraft.VTailB; %Scale the wing span
+       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+((Aircraft.VTailCR-Aircraft.VTailCT)/4/Aircraft.VTailB+tan(Aircraft.VTailQCSweep))*vfoilprofiles(1,i*3); %adjust for quarter chord sweep
+       vfoilprofiles(:,i*3-2) = vfoilprofiles(:,i*3-2)+Aircraft.VTailAC-.25*Aircraft.VTailCR; %Adjust back to the located wing AC
     end
    
     vtailprofiles = vfoilprofiles;
@@ -170,7 +170,7 @@ function [] = TDView(solidFlag, wingAirfoil, vTailAirfoil, hTailAirfoil)
     
     %Import to SolidWorks if solidFlag = 1.
     if solidFlag ==1
-        solidcurve(vtailprofiles);
+        solidcurve(vtailprofiles*25.4*12);
     else
     end
     
