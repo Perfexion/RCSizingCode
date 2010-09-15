@@ -437,9 +437,9 @@ function TDViewButton_Callback(hObject, eventdata, handles)
             Cd1 = str2double(regexp(text, '\W(?<= .0    .).....', 'match'));
             Cl1 = str2double(regexp(text, '\W(?<= .0     ....     ).....', 'match'));
             vstall = sqrt(Aircraft.FlightWeight/(.5*Aircraft.AtmDns*1.2*Aircraft.WingS))
-            if vstall > 22
+            if vstall > StallInput+1
                 WingLoading = WingLoading*.95;
-            elseif vstall < 18
+            elseif vstall < StallInput-1
                 WingLoading = WingLoading*1.05;
             end
         else
