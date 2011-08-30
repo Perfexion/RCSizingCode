@@ -58,7 +58,7 @@ function [] = WriteDatcom()
     fprintf(fid, '%s\n', 'DIM FT');
     %Flight Conditions
     fprintf(fid, '%s\n', strcat(' $FLTCON LOOP=2.0,NMACH=1.0,MACH(1)=0.1,TR=1.0,'));
-    fprintf(fid, '%s\n', strcat('  NALT=1,ALT(1)=',num2str(Aircraft.AtmAlt,'%6.2f'),',NALPHA=20.0,'));
+    fprintf(fid, '%s\n', strcat('  NALT=1.0,ALT(1)=',num2str(Aircraft.AtmAlt,'%6.2f'),',NALPHA=20.0,'));
     fprintf(fid, '%s\n', strcat('  ALSCHD(1)=-9.0,-8.0,-7.0,-6.0,-5.0,-4.0,-3.0,-2.0,'));
     fprintf(fid, '%s\n', strcat('   -1.0,0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0$'));
     %Options
@@ -68,7 +68,7 @@ function [] = WriteDatcom()
     fprintf(fid, '%s\n', strcat(' $SYNTHS VERTUP=.TRUE., XCG=',num2str(Aircraft.XCg,'%6.4f'),','));
     fprintf(fid, '%s\n', strcat('  ZCG=',num2str(Aircraft.ZCg,'%6.2f'),',XW=',num2str(Aircraft.WingAC-1/4*Aircraft.WingCR,'%6.2f'),','));
     fprintf(fid, '%s\n', strcat('  ZW=',num2str(Aircraft.WingZ,'%6.2f'),',ALIW=',num2str(Aircraft.WingIncidence*180/pi(),'%6.4f'),',XH=',num2str(Aircraft.HTailAC-1/4*Aircraft.HTailCR,'%6.2f'),','));
-    fprintf(fid, '%s\n', strcat('  ZH=',num2str(Aircraft.HTailZ,'%6.2f'),',ALIH=',num2str(Aircraft.HTailIncidence*180/pi(),'%6.4f'),',XV=',num2str(Aircraft.VTailAC-1/4*Aircraft.VTailCR,'%6.2f'),',ZV=0$'));
+    fprintf(fid, '%s\n', strcat('  ZH=',num2str(Aircraft.HTailZ,'%6.2f'),',ALIH=',num2str(Aircraft.HTailIncidence*180/pi(),'%6.4f'),',XV=',num2str(Aircraft.VTailAC-1/4*Aircraft.VTailCR,'%6.2f'),',ZV=0.0$'));
     
     %Body
     fprintf(fid, '%s', strcat(' $BODY NX=',num2str(NumProfiles,'%6.2f'),',ITYPE=1.0,'));
